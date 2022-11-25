@@ -7,10 +7,10 @@ A fast and simple messaging app.
 ## Structure
 
 | Codebase             | Description
-|----------------------|-----------------------------------------------------|
-| [`server`](server)   | Backend written in Python with aiohttp              |
-| [`web`](web)         | Web frontend written in React                       |
-| [`desktop`](desktop) | Desktop wrapper for the web app written in Electron |
+|----------------------|----------------------------------------|
+| [`server`](server)   | Backend written in Python with aiohttp |
+| [`web`](web)         | Web frontend written with React        |
+| [`desktop`](desktop) | Electron wrapper for the web app       |
 
 ## About
 
