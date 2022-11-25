@@ -109,7 +109,7 @@ body {
 
 .messages {
   overflow-y: auto;
-  word-wrap: break-word;
+  word-break: break-word;
   height: 100%;
 }
 
