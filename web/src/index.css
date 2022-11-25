@@ -92,8 +92,8 @@ body {
 }
 
 .sidebar {
-  position: relative;
-  width: 450px;
+  flex-grow: 1;
+  width: 400px;
   height: 100vh;
   border: 1px solid;
   overflow: auto;
@@ -114,7 +114,6 @@ body {
 
 .message {
   margin-left: 10px;
-  width: 100vh;
 }
 
 .message-input {
