@@ -5,9 +5,20 @@
   "main": "main.js",
   "author": "ilovetocode2019",
   "devDependencies": {
+    "@electron-forge/cli": "^6.0.3",
+    "@electron-forge/maker-deb": "^6.0.3",
+    "@electron-forge/maker-rpm": "^6.0.3",
+    "@electron-forge/maker-squirrel": "^6.0.3",
+    "@electron-forge/maker-zip": "^6.0.3",
     "electron": "^21.2.2"
   },
   "scripts": {
-    "start": "electron ."
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make"
+  },
+  "dependencies": {
+    "electron-is-dev": "^2.0.0",
+    "electron-squirrel-startup": "^1.0.0"
   }
 }
