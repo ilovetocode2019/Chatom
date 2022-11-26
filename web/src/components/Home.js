@@ -133,13 +133,16 @@ class Home extends React.Component {
   }
 
   openConversation = (conversation) => {
+    if (conversation === this.state.currentConversation) {
+      return;
+    }
     this.api.get(`/conversations/${conversation}/messages`)
     .then(response => {
       const messages = {[conversation]: response.data};
       this.setState({messages: messages});
       })
     .catch(error => {
-      if (conversation == this.state.currentConversation && !(conversation in this.state.messages)) {
+      if (conversation === this.state.currentConversation && !(conversation in this.state.messages)) {
         this.setState({currentConversation: null, error: 'Failed to load messages for this conversation.'});
       }
     });
