@@ -49,6 +49,10 @@ class Home extends React.Component {
   }
 
   componentDidMount() {
+    if (!(window.Notification)) {
+      return;
+    }
+
     Notification.requestPermission();
   }
 
