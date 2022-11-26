@@ -103,8 +103,9 @@ def main():
     config = __import__("config")
 
     app = init_app(config)
-    web.run_app(app)
 
+    port = getattr(config, "port", 8080)
+    web.run_app(app, port=port)
 
 if __name__ == "__main__":
     main()
