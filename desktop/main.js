@@ -11,8 +11,12 @@ function createWindow() {
     height: 600,
     title: 'Chatom',
     autoHideMenuBar: true,
-    backgroundColor: '#121212'
+    backgroundColor: '#121212',
+    webPreferences: {
+      devTools: false
+    }
   });
+
   mainWindow.loadURL(APP_URL);
 
   if (process.platform === 'win32') {
@@ -25,7 +29,6 @@ function createWindow() {
       'buttons': ['Close', 'Retry'],
       'title': 'Network Error',
       'noLink': true
-
     });
 
     if (result === 0) {
