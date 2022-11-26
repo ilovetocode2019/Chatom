@@ -103,7 +103,7 @@ class Signup extends React.Component {
             <h1>Sign Up</h1>
               {this.state.error ? <p className='form-error'>{this.state.error}</p>: null}
               {this.state.emailError ? <label htmlFor='email'><b className='form-error'>Email - {this.state.emailError}</b></label>: <label htmlFor='email'><b>Email</b></label>}<br />
-              <input type='text' className='form-input' id='email' placeholder='Enter Email' name='email' autoComplete='off' onChange={this.handleChange}/><br /><br />
+              <input type='email' className='form-input' id='email' placeholder='Enter Email' name='email' autoComplete='off' onChange={this.handleChange}/><br /><br />
               {this.state.usernameError ? <label htmlFor='username'><b className='form-error'>Username - {this.state.usernameError}</b></label>: <label htmlFor='username'><b>Username</b></label>}<br />
               <input type='text' className='form-input' id='username' placeholder='Enter Username' name='username' autoComplete='off' onChange={this.handleChange}/><br /><br />
               {this.state.passwordError ? <label htmlFor='password'><b className='form-error'>Password - {this.state.passwordError}</b></label>: <label htmlFor='password'><b>Password</b></label>}<br />

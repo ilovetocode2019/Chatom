@@ -64,7 +64,7 @@ class Login extends React.Component {
             <h1>Log In</h1>
               {this.state.error ? <p className='form-error'>{this.state.error}</p>: null}
               {this.state.emailMissing ? <label htmlFor='email'><b className='form-error'>Email - This required field is missing</b></label>: <label htmlFor='email'><b>Email</b></label>}<br />
-              <input type='text' className='form-input' id='email' placeholder='Enter Email' name='email' autoComplete='off' onChange={this.handleChange}/><br /><br />
+              <input type='email' className='form-input' id='email' placeholder='Enter Email' name='email' autoComplete='off' onChange={this.handleChange}/><br /><br />
               {this.state.passwordMissing ? <label htmlFor='password'><b className='form-error'>Password - This required field is missing</b></label>: <label htmlFor='password'><b>Password</b></label>}<br />
               <input type='password' className='form-input' id='password' placeholder='Enter Password' name='password' autoComplete='off' onChange={this.handleChange}/><br /><br />
             <input type='submit' className='form-submit' value='Log In' disabled={this.state.isLoading} />
