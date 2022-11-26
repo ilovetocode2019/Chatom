@@ -92,7 +92,7 @@ class Home extends React.Component {
             this.setState({messages: messages});
           }
 
-          if ((document.visibilityState === 'hidden' || this.state.currentConversation !== d.conversation_id) && d.author_id !== this.state.me.id) {
+          if (window.Notification && (document.visibilityState === 'hidden' || this.state.currentConversation !== d.conversation_id) && d.author_id !== this.state.me.id) {
             new Notification(this.state.me.users[d.author_id].username, {body: d.content}).onclick = (event) => {
               this.openConversation(d.conversation_id);
               window.focus();
