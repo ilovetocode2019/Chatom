@@ -16,7 +16,7 @@ class Conversation extends React.Component {
 
   render() {
     const conversation = this.props.me.conversations[this.props.currentConversation];
-    const messages = Object.values(this.props.messages);
+    const messages = this.props.messages ? Object.values(this.props.messages) : [];
 
     const members = Object.keys(conversation.members);
     const recipient = (members.length === 1 || members[0] !== this.props.me.id) ? members[0] : members[1];
@@ -36,7 +36,7 @@ class Conversation extends React.Component {
             {this.props.me.users[recipient].username}
           </Typography>
         </AppBar>
-  
+
         <div className='messages'>
           {messages.map((message) => (
             <Message

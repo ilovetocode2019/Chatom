@@ -136,11 +136,15 @@ class Home extends React.Component {
     this.api.get(`/conversations/${conversation}/messages`)
     .then(response => {
       const messages = {[conversation]: response.data};
-      this.setState({messages: messages, currentConversation: conversation});
+      this.setState({messages: messages});
       })
     .catch(error => {
-      this.setState({error: 'Failed to load messages for this conversation.'})
+      if (conversation == this.state.currentConversation && !(conversation in this.state.messages)) {
+        this.setState({currentConversation: null, error: 'Failed to load messages for this conversation.'});
+      }
     });
+
+    this.setState({currentConversation: conversation});
   }
 
   sendMessage = (conversation, content) => {
@@ -151,7 +155,7 @@ class Home extends React.Component {
       this.setState({messages: messages});
     })
     .catch(error => {
-      this.setState({error: 'Failure sending message.'})
+      this.setState({error: 'Failed to send message.'});
     })
   }
 
