@@ -23,7 +23,7 @@ class Conversation extends React.Component {
 
     return (
       <div className='conversation'>
-        <AppBar position='relative'>
+        <AppBar position='sticky'>
           <Typography sx={{ textAlign: 'center' }} variant='h6'>
             {this.props.exit ? (
               <IconButton onClick={this.props.exit}>
