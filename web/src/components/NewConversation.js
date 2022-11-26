@@ -79,7 +79,7 @@ class NewConversation extends React.Component {
             autoFocus
             margin='dense'
             label='Recipent Username'
-            type='username'
+            type='text'
             fullWidth
             variant='standard'
             error={this.state.error}
