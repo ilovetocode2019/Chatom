@@ -28,7 +28,7 @@ export default function SideBar(props) {
           return (
             <SideBarItem
             display_name={props.me.users[recipient].username}
-            selected={props.currentConversation==conversation.id}
+            selected={props.currentConversation === conversation.id}
             click={() => props.openConversation(conversation.id)}
             />
           )

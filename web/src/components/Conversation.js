@@ -1,6 +1,8 @@
 import React from 'react';
 
 import AppBar from '@mui/material/AppBar';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 
 class Conversation extends React.Component {
@@ -22,7 +24,17 @@ class Conversation extends React.Component {
     return (
       <div className='conversation'>
         <AppBar position='relative'>
-          <Typography sx={{ textAlign: 'center' }} variant='h6'>{this.props.me.users[recipient].username}</Typography>
+          <Typography sx={{ textAlign: 'center' }} variant='h6'>
+            {this.props.exit ? (
+              <IconButton onClick={this.props.exit}>
+                <ArrowBackIcon />
+              </IconButton>
+            ) : (
+              null
+            )}
+
+            {this.props.me.users[recipient].username}
+          </Typography>
         </AppBar>
   
         <div className='messages'>

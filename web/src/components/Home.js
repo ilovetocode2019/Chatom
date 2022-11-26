@@ -1,5 +1,7 @@
 import React from 'react';
+import MediaQuery from 'react-responsive';
 import { Redirect } from 'react-router-dom';
+
 import { EventSourcePolyfill } from 'event-source-polyfill';
 
 import Alert from '@mui/material/Alert';
@@ -86,7 +88,7 @@ class Home extends React.Component {
             this.setState({messages: messages});
           }
 
-          if ((document.visibilityState === 'hidden' || this.state.currentConversation != d.conversation_id) && d.author_id != this.state.me.id) {
+          if ((document.visibilityState === 'hidden' || this.state.currentConversation !== d.conversation_id) && d.author_id !== this.state.me.id) {
             new Notification(this.state.me.users[d.author_id].username, {body: d.content}).onclick = (event) => {
               this.openConversation(d.conversation_id);
               window.focus();
@@ -189,13 +191,48 @@ class Home extends React.Component {
           </Alert>
         </Snackbar>
 
-        <div className='home'>
+        <MediaQuery minWidth={501}>
+          <div className='home'>
+            <SideBar
+            me={this.state.me}
+            currentConversation={this.state.currentConversation}
+            openConversation={this.openConversation}
+            newConversation={() => this.setState({newConversation: true})}
+            />
+            {this.state.currentConversation ? (
+              <Conversation
+              me={this.state.me}
+              messages={this.state.messages[this.state.currentConversation]}
+              api={this.api}
+              currentConversation={this.state.currentConversation}
+              sendMessage={this.sendMessage}
+              />
+            ) : (
+              <Box sx={{
+                width: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}>
+                <h3>Select a conversation to start texting</h3>
+              </Box>
+            )}
+          </div>
+        </MediaQuery>
+
+        <MediaQuery maxWidth={500}>
+
+          {!(this.state.currentConversation) ? (
           <SideBar
           me={this.state.me}
           currentConversation={this.state.currentConversation}
           openConversation={this.openConversation}
           newConversation={() => this.setState({newConversation: true})}
           />
+          ) : (
+            null
+          )}
+
           {this.state.currentConversation ? (
             <Conversation
             me={this.state.me}
@@ -203,18 +240,14 @@ class Home extends React.Component {
             api={this.api}
             currentConversation={this.state.currentConversation}
             sendMessage={this.sendMessage}
+            exit={() => this.setState({currentConversation: null})}
             />
           ) : (
-            <Box sx={{
-              width: '100%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}>
-              <h3>Select a conversation to start texting</h3>
-            </Box>
+            null
           )}
-        </div>
+
+        </MediaQuery>
+
       </div>
     );
   }
