@@ -13,8 +13,11 @@ function createWindow() {
     autoHideMenuBar: true,
     backgroundColor: '#121212'
   });
-  mainWindow.loadFile('index.html');
   mainWindow.loadURL(APP_URL);
+
+  if (process.platform === 'win32') {
+      app.setAppUserModelId(mainWindow.title);
+  }
 
   mainWindow.webContents.on('did-fail-load', () => {
     const result = dialog.showMessageBoxSync(mainWindow, {
