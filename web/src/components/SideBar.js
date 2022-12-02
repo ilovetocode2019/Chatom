@@ -53,9 +53,9 @@ function SideBarItem(props) {
   const avatar = props.display_name.split(/\s/).reduce((response, word) => response += word.slice(0, 1), '').slice(0, 2);
   return (
     <div>
-      <ListItemButton onClick={props.click} selected={props.selected}>
+      <ListItemButton sx={{ padding: '10px' }} onClick={props.click} selected={props.selected}>
         <ListItemAvatar>
-          <Avatar color='primary'>{avatar}</Avatar>
+          <Avatar color='primary'>{avatar.toUpperCase()}</Avatar>
         </ListItemAvatar>
 
         <ListItemText>
