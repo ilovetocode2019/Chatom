@@ -1,4 +1,7 @@
+import MediaQuery from 'react-responsive';
+
 import Avatar from '@mui/material/Avatar';
+import Divider from '@mui/material/Divider';
 import EditIcon from '@mui/icons-material/Edit';
 import Fab from '@mui/material/Fab';
 import List from '@mui/material/List';
@@ -49,13 +52,20 @@ export default function SideBar(props) {
 function SideBarItem(props) {
   const avatar = props.display_name.split(/\s/).reduce((response, word) => response += word.slice(0, 1), '').slice(0, 2);
   return (
-    <ListItemButton onClick={props.click} selected={props.selected}>
-      <ListItemAvatar>
-        <Avatar color="primary">{avatar}</Avatar>
-      </ListItemAvatar>
-      <ListItemText>
-        <Typography>{props.display_name}</Typography>
+    <div>
+      <ListItemButton onClick={props.click} selected={props.selected}>
+        <ListItemAvatar>
+          <Avatar color='primary'>{avatar}</Avatar>
+        </ListItemAvatar>
+
+        <ListItemText>
+          <Typography noWrap>{props.display_name}</Typography>
         </ListItemText>
-    </ListItemButton>
+      </ListItemButton>
+
+      <MediaQuery maxWidth={500}>
+        <Divider light />
+      </MediaQuery>
+    </div>
   );
 }
