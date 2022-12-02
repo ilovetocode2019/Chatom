@@ -1,4 +1,4 @@
-import MediaQuery from 'react-responsive';
+import { useMediaQuery } from 'react-responsive';
 
 import Avatar from '@mui/material/Avatar';
 import Divider from '@mui/material/Divider';
@@ -51,9 +51,11 @@ export default function SideBar(props) {
 
 function SideBarItem(props) {
   const avatar = props.display_name.split(/\s/).reduce((response, word) => response += word.slice(0, 1), '').slice(0, 2);
+  const is_mobile = useMediaQuery({ query: '(max-width: 500px)' });
+
   return (
     <div>
-      <ListItemButton sx={{ padding: '10px' }} onClick={props.click} selected={props.selected}>
+      <ListItemButton sx={{ padding: is_mobile? '15px' : '10px' }} onClick={props.click} selected={props.selected}>
         <ListItemAvatar>
           <Avatar color='primary'>{avatar.toUpperCase()}</Avatar>
         </ListItemAvatar>
@@ -63,9 +65,7 @@ function SideBarItem(props) {
         </ListItemText>
       </ListItemButton>
 
-      <MediaQuery maxWidth={500}>
-        <Divider light />
-      </MediaQuery>
+      {is_mobile ? <Divider light /> : null}
     </div>
   );
 }
