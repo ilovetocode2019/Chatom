@@ -95,7 +95,7 @@ body {
   flex-grow: 1;
   width: 400px;
   height: 100vh;
-  border: 1px solid;
+  border: 0.1px solid;
   overflow: auto;
 }
 
