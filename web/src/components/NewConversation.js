@@ -78,7 +78,7 @@ class NewConversation extends React.Component {
             <TextField
             autoFocus
             margin='dense'
-            label='Recipient Name'
+            label='Recipient'
             type='text'
             fullWidth
             variant='standard'
