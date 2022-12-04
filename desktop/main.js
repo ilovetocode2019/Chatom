@@ -3,7 +3,7 @@ const { app, BrowserWindow, dialog } = require('electron');
 const path = require('path');
 const isDev = require('electron-is-dev');
 
-const APP_URL = isDev ? 'http://localhost:3000' : 'https://chat.ilovetocode2019.com'
+const APP_URL = isDev ? 'http://localhost:3000' : 'https://chatom.app'
 
 function createWindow() {
   const mainWindow = new BrowserWindow({
