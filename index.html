@@ -1,0 +1,66 @@
+<script>
+    fetch('https://raw.githubusercontent.com/ilovetocode2019/chatom-uptime/master/history/summary.json')
+      .then((response) => response.json())
+      .then((data) => document.getElementById('uptime').innerHTML = data[0].uptimeYear);
+</script>
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Chatom - An open source messaging app</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1" />
+        <link rel="stylesheet" href="styles.css">
+        <link rel="shortcut icon" type="image/png" href="favicon.png">
+    </head>
+    <body>
+        <div class="top">
+            <div class="topbar">
+                <a class="toplink" target="_blank" rel="noopener noreferrer" href="https://status.chatom.app">Status</a>
+                <a class="toplink" target="_blank" rel="noopener noreferrer" href="https://github.com/ilovetocode2019/Chatom">GitHub</a>
+                <a class="toplink" href="mailto:chatomchat@outlook.com">Support</a>
+            </div>
+            <h1>Chatom</h1>
+            <p>
+                An open source messaging app.
+                <br />
+                <br />
+                Chatom is a quick, simple, and relibale messaging app, available for any device. Start messaging immediately, with no download required!
+            </p>
+            <br />
+            <a class="link" target="_blank" rel="noopener noreferrer" href="https://chatom.app" target="_blank">Web App</a>
+        </div>
+        <br /><br />
+        <div class="feature">
+            <h3>Open</h3>
+            Chatom is open source, which means you can see exactly how everything works or even modify the app.
+        </div>
+        <div class="feature">
+            <h3>Private</h3>
+            You're the only one with access to your conversations. If you want, you can even run your own messaging server.
+        </div>
+        <div class="feature">
+            <h3>Reliable</h3>
+            With a <a id='uptime'>...</a> uptime in the past year, you can rely on Chatom to be available.
+        </div>
+        <div class="feature">
+            <h3>Consistent</h3>
+            No matter what device or platform you're using, you'll get the exact same experience.
+        </div>
+        <br /><br />
+
+        <div hidden class="feature">
+            <h3>Roadmap</h3>
+            Chatom is not finished yet, however it is inactive development, which means that new features are very coming soon. Here are some features that are coming soon:
+            <ul class="list">
+                <li>Grooup Chats</li>
+                <li>Enhancements like typing and attachments</li>
+                <li>Contacts</li>
+                <li>2 Factor Authentication</li>
+              </ul>
+        </div>
+        <div class="bottom">
+            <h2>Ready yet?</h2>
+            <a class="link" target="_blank" rel="noopener noreferrer" href="https://chatom.app" target="_blank">Open Web App</a>
+        </div>
+    </body>
+</html>
