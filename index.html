@@ -1,7 +1,7 @@
 <script>
     fetch('https://raw.githubusercontent.com/ilovetocode2019/chatom-uptime/master/history/summary.json')
       .then((response) => response.json())
-      .then((data) => document.getElementById('uptime').innerHTML = data[0].uptimeYear);
+      .then((data) => document.getElementById('uptime').innerHTML = data[1].uptimeYear);
 </script>
 
 <!DOCTYPE html>
