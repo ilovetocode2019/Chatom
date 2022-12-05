@@ -1,7 +1,6 @@
 body {
   text-align: center;
   color: white;
-  background-image: linear-gradient(to bottom, lightgray, darkgreen);
   font-family: Arial, Helvetica, sans-serif;
   margin: 0;
   padding: 0;
@@ -16,6 +15,11 @@ body {
 .bottom {
   padding-bottom: 50px;
   padding-top: 50px;
+}
+
+.features {
+  color: #E1D9D1;
+  background-image: linear-gradient(to bottom, gray, darkgreen);
 }
 
 .feature {
