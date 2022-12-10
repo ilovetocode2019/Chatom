@@ -1,5 +1,5 @@
 
-const { app, BrowserWindow, dialog } = require('electron');
+const { app, dialog, shell, BrowserWindow} = require('electron');
 const path = require('path');
 const isDev = require('electron-is-dev');
 
@@ -22,6 +22,11 @@ function createWindow() {
   if (process.platform === 'win32') {
       app.setAppUserModelId(mainWindow.title);
   }
+
+  mainWindow.webContents.on('new-window', (event, url) => {
+    event.preventDefault();
+    shell.openExternal(url);
+  });
 
   mainWindow.webContents.on('did-fail-load', () => {
     const result = dialog.showMessageBoxSync(mainWindow, {
