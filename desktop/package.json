@@ -4,14 +4,7 @@
   "description": "A fast and simple messaging app.",
   "main": "main.js",
   "author": "ilovetocode2019",
-  "devDependencies": {
-    "@electron-forge/cli": "^6.0.3",
-    "@electron-forge/maker-deb": "^6.0.3",
-    "@electron-forge/maker-rpm": "^6.0.3",
-    "@electron-forge/maker-squirrel": "^6.0.3",
-    "@electron-forge/maker-zip": "^6.0.3",
-    "electron": "^21.2.2"
-  },
+  "license": "MIT",
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",
@@ -20,5 +13,13 @@
   "dependencies": {
     "electron-is-dev": "^2.0.0",
     "electron-squirrel-startup": "^1.0.0"
+  },
+  "devDependencies": {
+    "@electron-forge/cli": "^6.0.4",
+    "@electron-forge/maker-deb": "^6.0.4",
+    "@electron-forge/maker-rpm": "^6.0.4",
+    "@electron-forge/maker-squirrel": "^6.0.4",
+    "@electron-forge/maker-zip": "^6.0.4",
+    "electron": "^22.0.0"
   }
 }
