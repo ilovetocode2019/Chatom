@@ -43,16 +43,26 @@ function createWindow() {
     }
   });
 
+  app.on('second-instance', (event, commandLine, workingDirectory) => {
+    if (mainWindow.isMinimized()) mainWindow.restore();
+    mainWindow.focus();
+  })
 }
 
-app.whenReady().then(() => {
-  createWindow();
+let lock = app.requestSingleInstanceLock();
 
-  app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) createWindow();
+if (!lock) {
+  app.quit();
+} else {
+  app.whenReady().then(() => {
+    createWindow();
+
+    app.on('activate', () => {
+      if (BrowserWindow.getAllWindows().length === 0) createWindow();
+    });
+
   });
-
-});
+}
 
 app.on('window-all-closed', () => {
   app.quit();
