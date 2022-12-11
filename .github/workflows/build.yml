@@ -1,0 +1,44 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - '**'
+
+jobs:
+  build:
+    name: Build for ${{ matrix.os }} ${{ matrix.arch }}
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+        arch: [x64, arm64]
+        include:
+        - os: windows-latest
+          arch: ia32
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+      - name: Set up Node 16
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - name: Install dependencies
+        run: |
+          cd desktop
+          yarn install
+      - name: Make Electron Distributable
+        run: |
+          cd desktop
+          yarn make --arch=${{ matrix.arch }}
+      - name: Upload Release Asset
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          files: |
+             desktop/out/make/**/*.exe
+             desktop/out/make/**/*.deb
+             desktop/out/make/**/*.rpm
