@@ -50,9 +50,19 @@ class Login extends React.Component {
     })
     .catch(error => {
       if (error.response) {
-        this.setState({error: error.response.data, isLoading: false});
+        this.setState({
+          emailMissing: false,
+          passwordMissing: false,
+          error: error.response.data,
+          isLoading: false
+        });
       } else {
-        this.setState({error: 'Couldn\'t contact the server. Try again later?', isLoading: false});
+        this.setState({
+          emailMissing: false,
+          passwordMissing: false,
+          error: 'Couldn\'t contact the server. Try again later?',
+          isLoading: false
+        });
       }
     });
   }
