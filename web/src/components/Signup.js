@@ -1,5 +1,12 @@
 import React from 'react';
 import { Link, Redirect } from 'react-router-dom';
+
+import Button from '@mui/material/Button';
+import FormHelperText from '@mui/material/FormHelperText';
+import Grid from '@mui/material/Grid';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
+
 import api from '../lib/api';
 
 class Signup extends React.Component {
@@ -9,9 +16,9 @@ class Signup extends React.Component {
       email: '',
       username: '',
       password: '',
-      emailError: false,
-      usernameError: false,
-      passwordError: false,
+      emailError: null,
+      usernameError: null,
+      passwordError: null,
       error: null,
       isLoading: false,
       redirect: localStorage.getItem('token')
@@ -33,24 +40,20 @@ class Signup extends React.Component {
     const username = this.state.username;
     const password = this.state.password;
 
-    const emailIsEmpty = email === '';
-    const usernameIsEmpty = username === '';
-    const passwordIsEmpty = password === '';
-  
-    const message = 'This required field is missing';
-    this.setState({
-      emailError: emailIsEmpty? message : null,
-      usernameError: usernameIsEmpty? message: null,
-      passwordError: passwordIsEmpty? message: null,
-      error: null,
-      isLoading: false
-    });
-
-    if (emailIsEmpty || usernameIsEmpty || passwordIsEmpty) {
+    if (email === '' || username === '' || password === '') {
+      const message = 'This required field is missing';
+      this.setState({
+        emailError: email === '' ? message : null,
+        usernameError: username === '' ? message : null,
+        passwordError: password === '' ? message : null,
+        error: null,
+        isLoading: false
+      });  
       return;
     }
 
-    const errors = {}
+    const errors = {};
+
     if (email.length > 254) {
       errors.emailError = 'Must be shorter than 254 characters';
     }
@@ -68,7 +71,12 @@ class Signup extends React.Component {
     }
 
     if (Object.keys(errors).length === 0) {
-      this.setState({emailError: null, usernameError: null, passwordError: null});
+      this.setState({
+        emailError: null,
+        usernameError: null,
+        passwordError: null,
+        error: null
+      });
     } else {
       errors.error = null;
       errors.isLoading = false;
@@ -100,16 +108,72 @@ class Signup extends React.Component {
       <div className='form-background'>
         <div className='form-modal'>
           <form onSubmit={this.handleSubmit}>
-            <h1>Sign Up</h1>
-              {this.state.error ? <p className='form-error'>{this.state.error}</p>: null}
-              {this.state.emailError ? <label htmlFor='email'><b className='form-error'>Email - {this.state.emailError}</b></label>: <label htmlFor='email'><b>Email</b></label>}<br />
-              <input type='email' className='form-input' id='email' placeholder='Enter Email' name='email' autoComplete='off' onChange={this.handleChange}/><br /><br />
-              {this.state.usernameError ? <label htmlFor='username'><b className='form-error'>Username - {this.state.usernameError}</b></label>: <label htmlFor='username'><b>Username</b></label>}<br />
-              <input type='text' className='form-input' id='username' placeholder='Enter Username' name='username' autoComplete='off' onChange={this.handleChange}/><br /><br />
-              {this.state.passwordError ? <label htmlFor='password'><b className='form-error'>Password - {this.state.passwordError}</b></label>: <label htmlFor='password'><b>Password</b></label>}<br />
-              <input type='password' className='form-input' id='password' placeholder='Enter Password' name='password' autoComplete='off' onChange={this.handleChange}/><br /><br />
-            <input type='submit' className='form-submit' value='Sign Up' disabled={this.state.isLoading} />
-            <footer>Already have an account? <Link className='link' to='/login'>Log in</Link></footer>
+            <Grid
+            container
+            direction='column'
+            spacing={2}
+            >
+              <Grid item>
+                <Typography component='h1' variant='h5'>Sign Up</Typography>
+                {this.state.error ? <FormHelperText error>{this.state.error}</FormHelperText> : null}
+              </Grid>
+
+              <Grid item>
+                <TextField
+                autoFocus
+                error={this.state.emailError}
+                fullWidth
+                helperText={this.state.emailError}
+                label='Email'
+                margin='dense'
+                name='email'
+                onChange={this.handleChange}
+                placeholder='Enter Email'
+                type='email'
+                variant='outlined'
+                />
+              </Grid>
+
+              <Grid item>
+                <TextField
+                autoFocus
+                error={this.state.usernameError}
+                fullWidth
+                helperText={this.state.usernameError}
+                label='Username'
+                margin='dense'
+                name='username'
+                onChange={this.handleChange}
+                placeholder='Enter Username'
+                type='username'
+                variant='outlined'
+                />
+              </Grid>
+
+              <Grid item>
+                <TextField
+                autoFocus
+                error={this.state.passwordError}
+                fullWidth
+                helperText={this.state.passwordError}
+                label='Password'
+                margin='dense'
+                name='password'
+                onChange={this.handleChange}
+                placeholder='Enter Password'
+                type='password'
+                variant='outlined'
+                />
+              </Grid>
+
+              <Grid item>
+                <Button disabled={this.state.isLoading} onClick={this.handleSubmit} variant='contained'>Sign Up</Button>
+              </Grid>
+
+              <Grid item>
+                <footer>Already have an account? <Link to='/login'>Log in</Link></footer>
+              </Grid>
+            </Grid>
           </form>
         </div>
       </div>

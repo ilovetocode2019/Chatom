@@ -2,10 +2,6 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-.link {
-  text-decoration: none;
-}
-
 .form-background {
   position: fixed;
   top: 0;
@@ -23,7 +19,7 @@ body {
   transform: translate(-50%, -50%);
   height: fit-content;
   min-width: 300px;
-  width: 45%;
+  width: 35%;
   background-color: rgba(0, 0, 0, 0.6);
   color: white;
   padding: 32px;
@@ -95,7 +91,6 @@ body {
   flex-grow: 1;
   width: 400px;
   height: 100vh;
-  border: 0.1px solid;
   overflow: auto;
 }
 
@@ -120,6 +115,7 @@ body {
   overflow-y: auto;
   word-break: break-word;
   height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
 }
 
 .message {
@@ -128,13 +124,13 @@ body {
 }
 
 .message-input {
-  justify-content: flex-end;
+  justify-content: center;
   max-height: 50vh;
   width: 100%;
   padding: 12px 20px;
-  border: 1px solid #ccc;
-  box-sizing: border-box;
-  border-radius: 4px;
+  border: none;
+  background-color: rgba(255, 255, 255, 0.09);
+  color: white;
 }
 
 .message-input:focus {

@@ -35,16 +35,16 @@ class App extends React.Component {
         <CssBaseline />
         <BrowserRouter>
           <Switch>
-            <Route path="/signup">
+            <Route exact path='/signup'>
               <Signup login={this.login}/>
             </Route>
-            <Route path="/login">
+            <Route exact path='/login'>
               <Login login={this.login}/>
             </Route>
-            <Route path="/">
+            <Route exact path='/'>
               {this.state.loggedIn ? <Home logout={this.logout} /> : <Redirect to="/login" />}
             </Route>
-            <Route>
+            <Route path='*'>
               <NotFound />
             </Route>
           </Switch>

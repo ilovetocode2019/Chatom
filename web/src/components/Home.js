@@ -223,7 +223,8 @@ class Home extends React.Component {
                 width: '100%',
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center'
+                justifyContent: 'center',
+                backgroundColor: 'rgba(0, 0, 0, 0.6)'
               }}>
                 <h3>Select a conversation to start texting</h3>
               </Box>

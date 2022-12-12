@@ -23,7 +23,7 @@ class Conversation extends React.Component {
 
     return (
       <div className='conversation'>
-        <AppBar position='sticky'>
+        <AppBar sx={{ boxShadow: 'none' }} position='sticky'>
           <Typography sx={{ textAlign: 'center' }} variant='h6'>
             {this.props.exit ? (
               <IconButton onClick={this.props.exit}>
@@ -97,7 +97,7 @@ class ConversationInput extends React.Component {
 
   render() {
     return (
-      <form className='message-form' onSubmit={this.handleSubmit}>
+      <form onSubmit={this.handleSubmit}>
         <input
         className='message-input'
         type='text'

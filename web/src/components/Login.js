@@ -1,5 +1,12 @@
 import React from 'react';
 import { Link, Redirect } from 'react-router-dom';
+
+import Button from '@mui/material/Button';
+import FormHelperText from '@mui/material/FormHelperText';
+import Grid from '@mui/material/Grid';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
+
 import api from '../lib/api';
 
 class Login extends React.Component {
@@ -33,8 +40,6 @@ class Login extends React.Component {
     if (email === '' || password === '') {
       this.setState({emailMissing: email === '', passwordMissing: password === '', error: null, isLoading: false});
       return;
-    } else if (this.state.emailMissing === true || this.state.passwordMissing === true){
-      this.setState({emailMissing: false, passwordMissing: false});
     }
 
     api.post('/account/token', {email: email, password: password})
@@ -61,14 +66,56 @@ class Login extends React.Component {
       <div className='form-background'>
         <div className='form-modal'>
           <form onSubmit={this.handleSubmit}>
-            <h1>Log In</h1>
-              {this.state.error ? <p className='form-error'>{this.state.error}</p>: null}
-              {this.state.emailMissing ? <label htmlFor='email'><b className='form-error'>Email - This required field is missing</b></label>: <label htmlFor='email'><b>Email</b></label>}<br />
-              <input type='email' className='form-input' id='email' placeholder='Enter Email' name='email' autoComplete='off' onChange={this.handleChange}/><br /><br />
-              {this.state.passwordMissing ? <label htmlFor='password'><b className='form-error'>Password - This required field is missing</b></label>: <label htmlFor='password'><b>Password</b></label>}<br />
-              <input type='password' className='form-input' id='password' placeholder='Enter Password' name='password' autoComplete='off' onChange={this.handleChange}/><br /><br />
-            <input type='submit' className='form-submit' value='Log In' disabled={this.state.isLoading} />
-            <footer>Don't have an account? <Link className='link' to='/signup'>Sign up</Link></footer>
+            <Grid
+            container
+            direction='column'
+            spacing={2}
+            >
+              <Grid item>
+                <Typography component='h1' variant='h5'>Log In</Typography>
+                {this.state.error ? <FormHelperText error>{this.state.error}</FormHelperText> : null}
+              </Grid>
+
+              <Grid item>
+                <TextField
+                autoFocus
+                error={this.state.emailMissing}
+                fullWidth
+                helperText={this.state.emailMissing ? 'This required field is missing' : null}
+                label='Email'
+                margin='dense'
+                name='email'
+                onChange={this.handleChange}
+                placeholder='Enter Email'
+                type='email'
+                variant='outlined'
+                />
+              </Grid>
+
+              <Grid item>
+                <TextField
+                autoFocus
+                error={this.state.passwordMissing}
+                fullWidth
+                helperText={this.state.passwordMissing ? 'This required field is missing' : null}
+                label='Password'
+                margin='dense'
+                name='password'
+                onChange={this.handleChange}
+                placeholder='Enter Password'
+                type='password'
+                variant='outlined'
+                />
+              </Grid>
+
+              <Grid item>
+                <Button disabled={this.state.isLoading} onClick={this.handleSubmit} variant='contained'>Log In</Button>
+              </Grid>
+
+              <Grid item>
+                <footer>Don't have an account? <Link to='/signup'>Sign up</Link></footer>
+              </Grid>
+            </Grid>
           </form>
         </div>
       </div>
