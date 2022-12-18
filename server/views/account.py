@@ -7,7 +7,7 @@ from aiohttp import web
 
 import utils
 from .base import BaseView
-from .event import EventCode
+from .events import EventCode
 
 class Account(BaseView):
     @utils.requires_auth()
@@ -80,6 +80,7 @@ class Account(BaseView):
             "created_at": now,
         }
         self.request.app["user_conversations"][user_id] = {}
+        self.request.app["push_subscriptions"][user_id] = {}
 
         return web.json_response({
             "id": user_id,
@@ -153,7 +154,7 @@ class Account(BaseView):
         })
 
         if "password" in self.data:
-            for subscription in self.request.app["subscriptions"][self.user["id"]]:
+            for subscription in self.request.app["sse_subscriptions"][self.user["id"]]:
                 await subscription.push()
             return web.json_response({
                 "token": self.request.app["token"].encode_token(self.user["id"])

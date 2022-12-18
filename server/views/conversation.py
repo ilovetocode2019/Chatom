@@ -4,7 +4,7 @@ from aiohttp import web
 
 import utils
 from .base import BaseView
-from .event import EventCode
+from .events import EventCode
 
 class Conversations(web.View):
     @utils.requires_auth()

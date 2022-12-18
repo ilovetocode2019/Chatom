@@ -30,3 +30,10 @@ CREATE TABLE IF NOT EXISTS messages (
     content TEXT,
     created_at TIMESTAMP
 );
+
+CREATE TABLE IF NOT EXISTS push_subscriptions (
+    user_id TEXT REFERENCES users ON DELETE CASCADE,
+    endpoint TEXT UNIQUE,
+    p256dh TEXT,
+    auth TEXT
+);

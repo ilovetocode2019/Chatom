@@ -1,5 +1,6 @@
-asyncpg
 aiohttp
+asyncpg
 bcrypt
 cerberus
 itsdangerous
+pywebpush

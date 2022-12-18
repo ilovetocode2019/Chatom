@@ -1,15 +1,17 @@
 import collections
+import json
 import logging
 
 import asyncpg
+import pywebpush
 from aiohttp import web
 
 import views
 import utils
-
-from views.websocket import WebsocketCloseCode
+from views.events import EventCode
 
 log = logging.getLogger("chatom.main")
+logging.getLogger("urllib3").setLevel(logging.WARNING)
 
 @web.middleware
 async def default_headers(request, handler):
@@ -38,8 +40,40 @@ class Application(web.Application):
             await self.push_to_user(conversation_member, e, d)
 
     async def push_to_user(self, user_id, e, d={}):
-        for subscription in self["subscriptions"][user_id]:
-            await subscription.push(e, d)
+        sse_subscriptions = self["sse_subscriptions"][user_id]
+
+        for sse_subscription in sse_subscriptions:
+            await sse_subscription.push(e, d)
+
+        if not any([sse_subscription.is_alive for sse_subscription in sse_subscriptions]) and e == EventCode.MESSAGE_SEND:
+            push_subscriptions = self["push_subscriptions"][user_id]
+
+            for push_subscription in list(push_subscriptions.values()):
+                try:
+                    subscription_info = {
+                        "endpoint": push_subscription["endpoint"],
+                        "keys": {
+                            "p256dh": push_subscription["p256dh"],
+                            "auth": push_subscription["auth"]
+                        }
+                    }
+
+                    data = {
+                        "title": self["users"][d["author_id"]]["username"],
+                        "body": d["content"],
+                        "conversation_id": d["conversation_id"]
+                    }
+
+                    pywebpush.webpush(subscription_info, data=json.dumps(data), vapid_private_key=self["config"].vapid, vapid_claims={"sub": "mailto:chatomchat@outlook.com"})
+                except pywebpush.WebPushException as exc:
+                    log.error("Failed to send push notification to user ID %s", user_id, exc_info=exc)
+
+                    self["push_subscriptions"][user_id].pop(push_subscription["endpoint"])
+
+                    query = """DELETE FROM push_subscriptions
+                               WHERE push_subscriptions.endpoint = $1;
+                            """
+                    await self["db"].execute(query, push_subscription["endpoint"])
 
 async def init_app(config):
     app = Application(middlewares=[default_headers])
@@ -48,6 +82,7 @@ async def init_app(config):
 
     app["db"] = await asyncpg.create_pool(config.database_uri)
     app["token"] = utils.TokenGenerator(config.token_secret)
+    app["config"] = config
 
     with open("schema.sql", "r") as file:
         await app["db"].execute(file.read())
@@ -56,7 +91,8 @@ async def init_app(config):
     app["conversations"] = {}
     app["conversation_members"] = {}
     app["user_conversations"] = {}
-    app["subscriptions"] = collections.defaultdict(list)
+    app["push_subscriptions"] = {}
+    app["sse_subscriptions"] = collections.defaultdict(list)
 
     log.info("Loading users from database...")
 
@@ -68,6 +104,7 @@ async def init_app(config):
     for user in users:
         app["users"][user["id"]] = dict(user)
         app["user_conversations"][user["id"]] = {}
+        app["push_subscriptions"][user["id"]] = {}
 
     log.info("Loading conversations from database...")
 
@@ -87,9 +124,19 @@ async def init_app(config):
             """
     conversation_members = await app["db"].fetch(query)
 
-    for conversation_member in await app["db"].fetch(query):
+    for conversation_member in conversation_members:
         app["conversation_members"][conversation_member["conversation_id"]][conversation_member["user_id"]] = dict(conversation_member)
-        app["user_conversations"][conversation_member["user_id"]][conversation_member["conversation_id"]] = app["conversations"][conversation_member["conversation_id"]]
+        app["user_conversations"][conversation_member["user_id"]][conversation_member["conversation_id"]] = dict(app["conversations"][conversation_member["conversation_id"]])
+
+    log.info("Loading push subscriptions from database...")
+
+    query = """SELECT *
+               FROM push_subscriptions;
+            """
+    push_subscriptions = await app["db"].fetch(query)
+
+    for push_subscription in push_subscriptions:
+        app["push_subscriptions"][push_subscription["user_id"]][push_subscription["endpoint"]] = dict(push_subscription)
 
     views.router(app)
 

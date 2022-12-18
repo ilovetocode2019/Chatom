@@ -19,19 +19,35 @@ class EventCode:
 class EventHandler:
     HEARTBEAT_INTERVAL = 30
 
-    def __init__(self, stream):
-        self.stream = stream
+    def __init__(self, request):
+        self.request = request
+
+        self.stream = web.StreamResponse()
+        self.stream.headers["Content-Type"] = "text/event-stream"
+        self.stream.headers["Cache-Control"] = "no-cache"
+        self.stream.headers["Connection"] = "keep-alive"
+        self.stream.headers["X-Accel-Buffering"] = "no"
+
+        self.stream.headers.setdefault("Access-Control-Allow-Origin", "*")
+        self.stream.headers.setdefault("Access-Control-Allow-Headers", "*")
+        self.stream.enable_chunked_encoding()
 
         self._queue = asyncio.Queue()
 
         self._inc = 1
         self._last_heartbeat = None
 
+    @property
+    def is_alive(self):
+        return self.request.transport and not self.request.transport.is_closing()
+
     async def push(self, e, d={}):
         await self._queue.put((e, d))
 
     async def run(self):
         self._last_heartbeat = time.time()
+
+        await self.stream.prepare(self.request)
 
         while True:
             try:
@@ -61,19 +77,7 @@ class EventHandler:
 class Events(BaseView):
     @utils.requires_auth()
     async def get(self):
-        stream = web.StreamResponse()
-        stream.headers["Content-Type"] = "text/event-stream"
-        stream.headers["Cache-Control"] = "no-cache"
-        stream.headers["Connection"] = "keep-alive"
-        stream.headers["X-Accel-Buffering"] = "no"
-
-        stream.headers.setdefault("Access-Control-Allow-Origin", "*")
-        stream.headers.setdefault("Access-Control-Allow-Headers", "*")
-
-        stream.enable_chunked_encoding()
-        await stream.prepare(self.request)
-
-        handler = EventHandler(stream)
+        handler = EventHandler(self.request)
 
         message = {
             "id": self.user["id"],
@@ -115,9 +119,9 @@ class Events(BaseView):
 
         await handler.push(EventCode.READY, message)
 
-        self.request.app["subscriptions"][self.user["id"]].append(handler)
+        self.request.app["sse_subscriptions"][self.user["id"]].append(handler)
 
         await handler.run()
 
-        self.request.app["subscriptions"][self.user["id"]].remove(handler)
-        return stream
+        self.request.app["sse_subscriptions"][self.user["id"]].remove(handler)
+        return handler.stream

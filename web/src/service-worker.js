@@ -70,6 +70,16 @@ self.addEventListener('message', (event) => {
 });
 
 // Any other custom service worker logic can go here.
+self.addEventListener('push', (event) => {
+  if (event.data) {
+    const data = event.data.json();
+    self.registration.showNotification(data.title, {
+      body: data.body,
+      data: data.conversation_id
+    });
+  }
+});
+
 self.addEventListener('notificationclick', (event) => {
   let url = self.location.origin + '/';
   event.notification.close();
@@ -94,7 +104,6 @@ self.addEventListener('notificationclick', (event) => {
 });
 
 const openConversation = (client, conversation) => {
-  console.log(conversation);
   client.postMessage({
     type: 'OPEN_CONVERSATION',
     conversation: conversation

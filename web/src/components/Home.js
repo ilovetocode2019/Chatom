@@ -10,6 +10,8 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Snackbar from '@mui/material/Snackbar';
 
 import api from '../lib/api';
+import urlBase64ToUint8Array from '../lib/utils';
+
 import Conversation from './Conversation';
 import NewConversation from './NewConversation';
 import SideBar from './SideBar';
@@ -50,12 +52,34 @@ class Home extends React.Component {
 
   componentDidMount() {
     if ('Notification' in window) {
-      Notification.requestPermission();
+      Notification.requestPermission().then((permission) => {
+        if (permission === 'granted') {
+          navigator.serviceWorker.getRegistration().then((registration) => {
+            if (registration && 'pushManager' in registration) {
+              registration.pushManager.subscribe({
+                userVisibleOnly: true,
+                applicationServerKey: urlBase64ToUint8Array(process.env.REACT_APP_VAPID)
+              })
+              .then((subscription) => {
+                console.log('Retrieved push endpoint: ' + subscription.endpoint);
+
+                this.api.post('/push', {
+                  endpoint: subscription.endpoint,
+                  p256dh: subscription.toJSON().keys.p256dh,
+                  auth: subscription.toJSON().keys.auth
+                })
+                .catch(error => {
+                  this.setState({error: 'Unable to subscribe to push notifications.'});
+                })
+              });
+            }
+          });
+        }
+      });
     }
 
     navigator.serviceWorker?.addEventListener('message', (event) => {
       if (event.data.type === 'OPEN_CONVERSATION') {
-        console.log(event.data);
         this.openConversation(event.data.conversation);
       }
     });
