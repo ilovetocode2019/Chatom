@@ -36,12 +36,26 @@ class Home extends React.Component {
       this.state = {
         me: null,
         messages: {},
+        afk: false,
         disconnected: false,
         error: null,
         redirect: false,
         newConversation: false,
         currentConversation: null
       };
+
+      this.source = null;
+
+      this.onActivity = this.onActivity.bind(this);
+      this.inactivityTimeout = null;
+
+      document.onload = this.onActivity;
+      document.onmousemove = this.onActivity;
+      document.onmousedown = this.onActivity;
+      document.ontouchstart = this.onActivity;
+      document.onclick = this.onActivity;
+      document.onkeydown = this.onActivity;
+
       this.api = api;
       this.api.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
   }
@@ -86,83 +100,110 @@ class Home extends React.Component {
 
   }
 
+  onActivity = () => {
+    if (!this.source) {
+      console.log('Tab has become active. Reconnecting for now.');
+      this.connect();
+    }
+
+    this.setState({afk: false});
+    window.clearTimeout(this.inactivityTimeout);
+    window.setTimeout(this.onInactivity, 300000);
+  }
+
+  onInactivity = () => {
+    if (this.source) {
+      console.log('Tab has become inactive. Disconnecting for now.');
+
+      this.source.close();
+      this.source = null;
+    }
+
+    this.setState({afk: true});
+  }
+
   connect() {
     console.log('Subscribing to server-sent events.');
 
     const url = process.env.REACT_APP_API_BASE_URL + '/events';
-    const source = new EventSourcePolyfill(url, {
+    this.source = new EventSourcePolyfill(url, {
       headers: {'Authorization': `Bearer ${localStorage.getItem('token')}`}
     });
 
-      source.onopen = (event) => {
-        console.log("Subscribed to server-sent events.");
-        this.setState({disconnected: false});
-      }
+    this.source.onopen = (event) => {
+      console.log("Subscribed to server-sent events.");
+      this.setState({disconnected: false});
+    }
 
-      source.onmessage = (event) => {
-        console.log('Received new message: ' + event.data);
-        const message = JSON.parse(event.data);
+    this.source.onmessage = (event) => {
+      console.log('Received new message: ' + event.data);
+      const message = JSON.parse(event.data);
 
-        const e = message.e;
-        const d = message.d;
+      const e = message.e;
+      const d = message.d;
 
-        if (e === 1) {
-          this.setState({me: d});
+      if (e === 1) {
+        this.setState({me: d});
 
-        } else if (e === 3) {
-          const me = this.state.me;
-          me.conversations[d.id] = d;
-          this.setState({me: me});
+        if (this.state.currentConversation) {
+          console.log('Fetching potentially outdated conversation...');
+          this.loadMessages(this.state.currentConversation);
+        }
 
-        } else if (e === 4) {
-          if (d.conversation_id in this.state.messages) {
-            const messages = this.state.messages;
-            messages[d.conversation_id][d.id] = d;
-            this.setState({messages: messages});
-          }
+      } else if (e === 3) {
+        const me = this.state.me;
+        me.conversations[d.id] = d;
+        this.setState({me: me});
 
-          if ((document.visibilityState !== 'visible' || this.state.currentConversation !== d.conversation_id) && d.author_id !== this.state.me.id) {
-            try {
-              new Notification(this.state.me.users[d.author_id].username, {body: d.content}).onclick = () => {
-                window.focus();
-                this.openConversation(d.conversation_id);
-              }
-            } catch {
-              navigator.serviceWorker.getRegistration().then(registration => {
-                if (registration && 'showNotification' in registration) {
-                  registration.showNotification(this.state.me.users[d.author_id].username, {
-                    body: d.content,
-                    data: d.conversation_id
-                  });
-                }
-              });
+      } else if (e === 4) {
+        if (d.conversation_id in this.state.messages) {
+          const messages = this.state.messages;
+          messages[d.conversation_id][d.id] = d;
+          this.setState({messages: messages});
+        }
+
+        if ((document.visibilityState !== 'visible' || this.state.currentConversation !== d.conversation_id) && d.author_id !== this.state.me.id) {
+          try {
+            new Notification(this.state.me.users[d.author_id].username, {body: d.content}).onclick = () => {
+              window.focus();
+              this.openConversation(d.conversation_id);
             }
+          } catch {
+            navigator.serviceWorker.getRegistration().then(registration => {
+              if (registration && 'showNotification' in registration) {
+                registration.showNotification(this.state.me.users[d.author_id].username, {
+                  body: d.content,
+                  data: d.conversation_id
+                });
+              }
+            });
           }
-
-        } else if (e === 5) {
-          const me = this.state.me;
-          me.users[d.id] = d;
-          this.setState({me: me});
         }
+
+      } else if (e === 5) {
+        const me = this.state.me;
+        me.users[d.id] = d;
+        this.setState({me: me});
       }
+    }
 
-        source.onerror = (event) => {
-          console.log('Server-sent event error with status code ' + event.status + '.');
-          source.close();
+    this.source.onerror = (event) => {
+      console.log('Server-sent event error with status code ' + event.status + '.');
+      this.source.close();
 
-          if (event.status === 401) {
-            console.log('Token has expired. Logging out and redirecting to /login.');
+      if (event.status === 401) {
+        console.log('Token has expired. Logging out and redirecting to /login.');
 
-            localStorage.removeItem('token');
-            this.props.logout();
-            this.setState({redirect: true});
-          } else {
-            console.warn('Unknown disconnect reason. Attempting to reconnect.');
+        localStorage.removeItem('token');
+        this.props.logout();
+        this.setState({redirect: true});
+      } else {
+        console.warn('Unknown disconnect reason. Attempting to reconnect.');
 
-            this.setState({disconnected: true});
-            this.connect();
-         }
-        }
+        this.setState({disconnected: true});
+        this.connect();
+      }
+    }
   }
 
   newConversation = (user, conversation) => {
@@ -180,6 +221,12 @@ class Home extends React.Component {
     if (conversation === this.state.currentConversation) {
       return;
     }
+
+    this.loadMessages(conversation);
+    this.setState({currentConversation: conversation});
+  }
+
+  loadMessages = (conversation) => {
     this.api.get(`/conversations/${conversation}/messages`)
     .then(response => {
       const messages = {[conversation]: response.data};
@@ -190,8 +237,6 @@ class Home extends React.Component {
         this.setState({currentConversation: null, error: 'Failed to load messages for this conversation.'});
       }
     });
-
-    this.setState({currentConversation: conversation});
   }
 
   sendMessage = (conversation, content) => {
@@ -233,6 +278,12 @@ class Home extends React.Component {
         <Snackbar open={this.state.disconnected}>
           <Alert variant='filled' severity='warning'>
             Trying to reconnect...
+          </Alert>
+        </Snackbar>
+
+        <Snackbar open={this.state.afk}>
+          <Alert variant='filled' severity='info'>
+            This window will be frozen to save resources until you become active.
           </Alert>
         </Snackbar>
 
