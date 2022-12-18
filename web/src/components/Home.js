@@ -49,11 +49,17 @@ class Home extends React.Component {
   }
 
   componentDidMount() {
-    if (!(window.Notification)) {
-      return;
+    if ('Notification' in window) {
+      Notification.requestPermission();
     }
 
-    Notification.requestPermission();
+    navigator.serviceWorker?.addEventListener('message', (event) => {
+      if (event.data.type === 'OPEN_CONVERSATION') {
+        console.log(event.data);
+        this.openConversation(event.data.conversation);
+      }
+    });
+
   }
 
   connect() {
@@ -74,8 +80,7 @@ class Home extends React.Component {
         const message = JSON.parse(event.data);
 
         const e = message.e;
-        const d = message.d
-        const i = message.i;
+        const d = message.d;
 
         if (e === 1) {
           this.setState({me: d});
@@ -92,11 +97,22 @@ class Home extends React.Component {
             this.setState({messages: messages});
           }
 
-          if (window.Notification && (document.visibilityState === 'hidden' || this.state.currentConversation !== d.conversation_id) && d.author_id !== this.state.me.id) {
-            new Notification(this.state.me.users[d.author_id].username, {body: d.content}).onclick = (event) => {
-              this.openConversation(d.conversation_id);
-              window.focus();
-            };
+          if ((document.visibilityState !== 'visible' || this.state.currentConversation !== d.conversation_id) && d.author_id !== this.state.me.id) {
+            try {
+              new Notification(this.state.me.users[d.author_id].username, {body: d.content}).onclick = () => {
+                window.focus();
+                this.openConversation(d.conversation_id);
+              }
+            } catch {
+              navigator.serviceWorker.getRegistration().then(registration => {
+                if (registration && 'showNotification' in registration) {
+                  registration.showNotification(this.state.me.users[d.author_id].username, {
+                    body: d.content,
+                    data: d.conversation_id
+                  });
+                }
+              });
+            }
           }
 
         } else if (e === 5) {

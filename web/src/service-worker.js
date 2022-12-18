@@ -70,3 +70,33 @@ self.addEventListener('message', (event) => {
 });
 
 // Any other custom service worker logic can go here.
+self.addEventListener('notificationclick', (event) => {
+  let url = self.location.origin + '/';
+  event.notification.close();
+  event.waitUntil(
+      self.clients.matchAll({type: 'window'}).then( windowClients => {
+          // Check if there is already a window/tab open
+          for (var i = 0; i < windowClients.length; i++) {
+              var client = windowClients[i];
+              // If so, just focus it.
+              if ('focus' in client) {
+                  client.focus();
+                  openConversation(client, event.notification.data);
+                  return;
+              }
+          }
+          // If not, then open the target URL in a new window/tab
+          if (self.clients.openWindow) {
+              return self.clients.openWindow(url).then(client => (openConversation(client, event.notification.data)));
+          }
+      })
+  );
+});
+
+const openConversation = (client, conversation) => {
+  console.log(conversation);
+  client.postMessage({
+    type: 'OPEN_CONVERSATION',
+    conversation: conversation
+  });
+}
