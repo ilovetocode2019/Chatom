@@ -119,7 +119,7 @@ class Login extends React.Component {
               </Grid>
 
               <Grid item>
-                <Button disabled={this.state.isLoading} onClick={this.handleSubmit} variant='contained'>Log In</Button>
+                <Button type='submit' disabled={this.state.isLoading} onClick={this.handleSubmit} variant='contained'>Log In</Button>
               </Grid>
 
               <Grid item>

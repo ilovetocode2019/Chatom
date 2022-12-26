@@ -54,8 +54,8 @@ class Signup extends React.Component {
 
     const errors = {};
 
-    if (email.length > 254) {
-      errors.emailError = 'Must be shorter than 254 characters';
+    if (email.length > 256) {
+      errors.emailError = 'Must be shorter than 256 characters';
     }
     if (username.length < 2) {
       errors.usernameError = 'Must be at least 2 characters';
@@ -167,7 +167,7 @@ class Signup extends React.Component {
               </Grid>
 
               <Grid item>
-                <Button disabled={this.state.isLoading} onClick={this.handleSubmit} variant='contained'>Sign Up</Button>
+                <Button type='submit' disabled={this.state.isLoading} onClick={this.handleSubmit} variant='contained'>Sign Up</Button>
               </Grid>
 
               <Grid item>

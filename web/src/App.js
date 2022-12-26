@@ -42,7 +42,7 @@ class App extends React.Component {
               <Login login={this.login}/>
             </Route>
             <Route exact path='/'>
-              {this.state.loggedIn ? <Home logout={this.logout} /> : <Redirect to="/login" />}
+              {this.state.loggedIn ? <Home logout={this.logout} /> : <Redirect to='/login' />}
             </Route>
             <Route path='*'>
               <NotFound />

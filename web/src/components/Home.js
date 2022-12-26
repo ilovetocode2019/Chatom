@@ -14,6 +14,7 @@ import urlBase64ToUint8Array from '../lib/utils';
 
 import Conversation from './Conversation';
 import NewConversation from './NewConversation';
+import Settings from './Settings';
 import SideBar from './SideBar';
 
 function Loading(props) {
@@ -40,11 +41,17 @@ class Home extends React.Component {
         disconnected: false,
         error: null,
         redirect: false,
+        showSettings: false,
         newConversation: false,
         currentConversation: null
       };
 
+      this.token = localStorage.getItem('token');
       this.source = null;
+
+      this.api = api;
+      this.api.defaults.headers.common['Authorization'] = `Bearer ${this.token}`;
+
 
       this.onActivity = this.onActivity.bind(this);
       this.inactivityTimeout = null;
@@ -55,9 +62,6 @@ class Home extends React.Component {
       document.ontouchstart = this.onActivity;
       document.onclick = this.onActivity;
       document.onkeydown = this.onActivity;
-
-      this.api = api;
-      this.api.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
   }
 
   componentWillMount() {
@@ -127,7 +131,7 @@ class Home extends React.Component {
 
     const url = process.env.REACT_APP_API_BASE_URL + '/events';
     this.source = new EventSourcePolyfill(url, {
-      headers: {'Authorization': `Bearer ${localStorage.getItem('token')}`}
+      headers: {'Authorization': `Bearer ${this.token}`}
     });
 
     this.source.onopen = (event) => {
@@ -193,10 +197,7 @@ class Home extends React.Component {
 
       if (event.status === 401) {
         console.log('Token has expired. Logging out and redirecting to /login.');
-
-        localStorage.removeItem('token');
-        this.props.logout();
-        this.setState({redirect: true});
+        this.logout();
       } else {
         console.warn('Unknown disconnect reason. Attempting to reconnect.');
 
@@ -204,6 +205,12 @@ class Home extends React.Component {
         this.connect();
       }
     }
+  }
+
+  logout = () => {
+    localStorage.removeItem('token');
+    this.props.logout();
+    this.setState({redirect: true});
   }
 
   newConversation = (user, conversation) => {
@@ -264,16 +271,20 @@ class Home extends React.Component {
 
     return (
       <div>
-        {
-        this.state.newConversation ? (
-          <NewConversation
-          api={this.api}
-          submit={this.newConversation}
-          close={() => this.setState({newConversation: false})}
-          />
-        ) : (
-          null
-        )}
+        <Settings
+        open={this.state.showSettings}
+        close={() => this.setState({showSettings: false})}
+        me={this.state.me}
+        api={this.api}
+        logout={this.logout}
+        />
+
+        <NewConversation
+        open={this.state.newConversation}
+        close={() => this.setState({newConversation: false})}
+        submit={this.newConversation}
+        api={this.api}
+        />
 
         <Snackbar open={this.state.disconnected}>
           <Alert variant='filled' severity='warning'>
@@ -299,8 +310,10 @@ class Home extends React.Component {
             me={this.state.me}
             currentConversation={this.state.currentConversation}
             openConversation={this.openConversation}
+            showSettings={() => this.setState({showSettings: true})}
             newConversation={() => this.setState({newConversation: true})}
             />
+
             {this.state.currentConversation ? (
               <Conversation
               me={this.state.me}
@@ -311,15 +324,16 @@ class Home extends React.Component {
               />
             ) : (
               <Box sx={{
-                width: '100%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                backgroundColor: 'rgba(0, 0, 0, 0.6)'
+              width: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundColor: 'rgba(0, 0, 0, 0.6)'
               }}>
                 <h3>Select a conversation to start texting</h3>
               </Box>
             )}
+
           </div>
         </MediaQuery>
 
@@ -330,6 +344,7 @@ class Home extends React.Component {
           me={this.state.me}
           currentConversation={this.state.currentConversation}
           openConversation={this.openConversation}
+          showSettings={() => this.setState({showSettings: true})}
           newConversation={() => this.setState({newConversation: true})}
           />
           ) : (

@@ -44,6 +44,9 @@ class EventHandler:
     async def push(self, e, d={}):
         await self._queue.put((e, d))
 
+    async def shutdown(self):
+        self.stream.write_eof()
+
     async def run(self):
         self._last_heartbeat = time.time()
 

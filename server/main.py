@@ -20,6 +20,7 @@ async def default_headers(request, handler):
     if response is not None:
         response.headers.setdefault("Access-Control-Allow-Origin", "*")
         response.headers.setdefault("Access-Control-Allow-Headers", "*")
+        response.headers.setdefault("Access-Control-Allow-Methods", "*")
         return response
 
 class Application(web.Application):

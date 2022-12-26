@@ -8,12 +8,16 @@ import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
+import PersonIcon from '@mui/icons-material/Person';
 import Typography from '@mui/material/Typography';
+import SettingsIcon from '@mui/icons-material/Settings';
+import SpeedDial from '@mui/material/SpeedDial';
+import SpeedDialAction from '@mui/material/SpeedDialAction';
 
 const style = {
-  left: 20,
+  position: 'absolute',
   bottom: 20,
-  position: 'fixed'
+  right: 20
 };
 
 
@@ -37,14 +41,26 @@ export default function SideBar(props) {
           )
         })}
       </List>
-      <Fab
-      onClick={props.newConversation}
+
+      <SpeedDial
+      ariaLabel='fab'
       sx={style}
-      color='primary'
-      aria-label='add'
+      icon={<PersonIcon />}
       >
-        <EditIcon />
-      </Fab>
+        <SpeedDialAction
+        icon={<EditIcon />}
+        tooltipTitle='New Conversation'
+        tooltipOpen
+        onClick={props.newConversation}
+        />
+
+        <SpeedDialAction
+        icon={<SettingsIcon />}
+        tooltipTitle='Settings'
+        tooltipOpen
+        onClick={props.showSettings}
+        />
+      </SpeedDial>
     </div>
   );
 }

@@ -68,7 +68,7 @@ class NewConversation extends React.Component {
   render() {
     return (
       <Dialog
-      open
+      open={this.props.open}
       onClose={this.props.close}
       >
         <DialogTitle>New Conversation</DialogTitle>
