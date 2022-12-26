@@ -176,8 +176,10 @@ class Account(BaseView):
         })
 
         if username:
-            for user in self.request.app.get_available_users(self.user["id"]):
-                await self.requesst.app.push_to_user(user["id"], EventCode.USER_AVAILABLE, {
+            available_users = await self.request.app.get_available_users(self.user["id"])
+
+            for user in available_users.values():
+                await self.request.app.push_to_user(user["id"], EventCode.USER_AVAILABLE, {
                     "id": self.user["id"],
                     "username": username or self.user["username"],
                     "created_at": user["created_at"].timestamp()
