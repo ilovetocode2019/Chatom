@@ -17,7 +17,7 @@ class Settings extends React.Component {
 
     this.state = {
       changeEmail: false,
-      changePassword: false,
+      changeUsername: false,
       changePassword: false,
       confirmLogout: false
     }
@@ -30,8 +30,8 @@ class Settings extends React.Component {
         open={this.props.open}
         onClose={this.props.close}
         >
-          <DialogTitle>
-            <Typography variant='h5' align='center'>Settings</Typography>
+          <DialogTitle variant='h5' textAlign='center'>
+            Settings
           </DialogTitle>
 
           <DialogContent>
@@ -174,8 +174,8 @@ class ChangeEmail extends React.Component {
       open={this.props.open}
       onClose={this.props.close}
       >
-        <DialogTitle>
-          <Typography variant='h6' align='center'>Change Email</Typography>
+        <DialogTitle variant='h6' textAlign='center'>
+          Change Email
         </DialogTitle>
 
         <DialogContent>
@@ -274,8 +274,8 @@ class ChangeUsername extends React.Component {
       open={this.props.open}
       onClose={this.props.close}
       >
-        <DialogTitle>
-          <Typography variant='h6' align='center'>Change Username</Typography>
+        <DialogTitle variant='h6' textAlign='center'>
+          Change Email
         </DialogTitle>
 
         <DialogContent>
@@ -370,9 +370,10 @@ class ChangePassword extends React.Component {
       open={this.props.open}
       onClose={this.props.close}
       >
-        <DialogTitle>
-          <Typography variant='h6' align='center'>Change Password</Typography>
+        <DialogTitle variant='h6' textAlign='center'>
+          Change Password
         </DialogTitle>
+
 
         <DialogContent>
           {this.state.error ? <FormHelperText error>{this.state.error}</FormHelperText> : null}
@@ -414,8 +415,8 @@ class ConfirmLogout extends React.Component {
       open={this.props.open}
       onClose={this.props.close}
       >
-        <DialogTitle>
-          <Typography variant='h6' align='center'>Log Out</Typography>
+        <DialogTitle variant='h6' textAlign='center'>
+          Log Out
         </DialogTitle>
 
         <DialogContent>
