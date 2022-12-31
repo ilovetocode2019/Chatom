@@ -135,5 +135,6 @@ body {
 }
 
 .message-input:focus {
+  display: block;
   outline: none;
 }
