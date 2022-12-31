@@ -221,7 +221,9 @@ class Home extends React.Component {
     const me = this.state.me;
     me.users[user.id] = user;
     me.conversations[conversation.id] = conversation;
-    this.setState({me: me})
+
+    this.setState({me: me});
+    this.openConversation(conversation.id);
   }
 
   openConversation = (conversation) => {

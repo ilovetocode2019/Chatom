@@ -53,6 +53,7 @@ class NewConversation extends React.Component {
     this.props.api.get(`/users/${user.id}/conversation`)
     .then(response => {
       this.props.submit(user, response.data);
+      this.setState({disabled: false});
       this.props.close();
     }).catch(error => {
       if (error.response) {
