@@ -87,7 +87,7 @@ class Home extends React.Component {
       this.setState({askNotification: false});
 
       if (permission === 'granted') {
-        navigator.serviceWorker.getRegistration().then((registration) => {
+        navigator.serviceWorker?.getRegistration().then((registration) => {
           if (registration && 'pushManager' in registration) {
             registration.pushManager.subscribe({
               userVisibleOnly: true,
@@ -116,7 +116,7 @@ class Home extends React.Component {
   }
 
   disableNotifications() {
-    navigator.serviceWorker.getRegistration().then((registration) => {
+    navigator.serviceWorker?.getRegistration().then((registration) => {
       if (registration && 'pushManager' in registration) {
         registration.pushManager.unsubscribe()
         .then((subscription) => {
@@ -171,7 +171,8 @@ class Home extends React.Component {
           this.setState({messages: messages});
         }
 
-        if (localStorage.get('notificationPreference') === true && (document.visibilityState !== 'visible' || this.state.currentConversation !== d.conversation_id) && d.author_id !== this.state.me.id) {
+        console.log(document.visibilityState);
+        if (localStorage.getItem('notificationPreference') === 'enabled' && (document.visibilityState !== 'visible' || this.state.currentConversation !== d.conversation_id) && d.author_id !== this.state.me.id) {
           try {
             new Notification(this.state.me.users[d.author_id].username, {body: d.content}).onclick = () => {
               window.focus();
