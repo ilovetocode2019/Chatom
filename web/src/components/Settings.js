@@ -8,6 +8,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import FormHelperText from '@mui/material/FormHelperText';
 import Grid from '@mui/material/Grid';
+import Switch from '@mui/material/Switch';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
@@ -20,6 +21,14 @@ class Settings extends React.Component {
       changeUsername: false,
       changePassword: false,
       confirmLogout: false
+    }
+  }
+
+  notificationChange = (event) => {
+    if (event.target.checked) {
+      this.props.enableNotifications();
+    } else {
+      this.props.disableNotifications();
     }
   }
 
@@ -42,7 +51,7 @@ class Settings extends React.Component {
             direction='column'
             >
               <Grid item>
-                <Typography variant='h6'>Account Settings</Typography>
+                <Typography variant='h6'>Account</Typography>
               </Grid>
 
               <Grid item>
@@ -64,6 +73,21 @@ class Settings extends React.Component {
               </Grid>
 
               <Box sx={{m: 2}} />
+
+              <Grid item>
+                <Typography variant='h6'>Device</Typography>
+              </Grid>
+
+              <Grid item>
+                <Grid container spacing={1}>
+                  <Grid item>
+                    <Typography display='inline'>Notifications</Typography>
+                    <Switch onChange={this.notificationChange} checked={localStorage.getItem('notificationPreference') === 'enabled'} />
+                  </Grid>
+                </Grid>
+              </Grid>
+
+              <Box sx={{m: 1}} />
 
               <Grid item>
                 <Typography variant='h6'>Security</Typography>

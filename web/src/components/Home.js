@@ -14,6 +14,7 @@ import urlBase64ToUint8Array from '../lib/utils';
 
 import Conversation from './Conversation';
 import NewConversation from './NewConversation';
+import NotificationRequest from './NotificationRequest';
 import Settings from './Settings';
 import SideBar from './SideBar';
 
@@ -37,12 +38,12 @@ class Home extends React.Component {
       this.state = {
         me: null,
         messages: {},
-        afk: false,
         disconnected: false,
         error: null,
         redirect: false,
         showSettings: false,
         newConversation: false,
+        askNotification: false,
         currentConversation: null
       };
 
@@ -52,16 +53,6 @@ class Home extends React.Component {
       this.api = api;
       this.api.defaults.headers.common['Authorization'] = `Bearer ${this.token}`;
 
-
-      this.onActivity = this.onActivity.bind(this);
-      this.inactivityTimeout = null;
-
-      document.onload = this.onActivity;
-      document.onmousemove = this.onActivity;
-      document.onmousedown = this.onActivity;
-      document.ontouchstart = this.onActivity;
-      document.onclick = this.onActivity;
-      document.onkeydown = this.onActivity;
   }
 
   componentWillMount() {
@@ -69,31 +60,18 @@ class Home extends React.Component {
   }
 
   componentDidMount() {
-    if ('Notification' in window) {
-      Notification.requestPermission().then((permission) => {
-        if (permission === 'granted') {
-          navigator.serviceWorker.getRegistration().then((registration) => {
-            if (registration && 'pushManager' in registration) {
-              registration.pushManager.subscribe({
-                userVisibleOnly: true,
-                applicationServerKey: urlBase64ToUint8Array(process.env.REACT_APP_VAPID)
-              })
-              .then((subscription) => {
-                console.log('Retrieved push endpoint: ' + subscription.endpoint);
+    const notificationPreference = localStorage.getItem('notificationPreference');
 
-                this.api.post('/push', {
-                  endpoint: subscription.endpoint,
-                  p256dh: subscription.toJSON().keys.p256dh,
-                  auth: subscription.toJSON().keys.auth
-                })
-                .catch(error => {
-                  this.setState({error: 'Unable to subscribe to push notifications.'});
-                })
-              });
-            }
-          });
-        }
-      });
+    if ('Notification' in window) {
+      console.log(notificationPreference)
+      if (notificationPreference !== 'enabled' && notificationPreference !== 'disabled') {
+        this.setState({askNotification: true});
+      } else if (notificationPreference === 'enabled' && Notification.permission === 'default') {
+        this.setState({askNotification: true});
+        console.log('yo');
+      } else if (notificationPreference === 'enabled' && Notification.permission === 'denied') {
+        localStorage.setItem('notificationPreference', false)
+      }
     }
 
     navigator.serviceWorker?.addEventListener('message', (event) => {
@@ -104,27 +82,54 @@ class Home extends React.Component {
 
   }
 
-  onActivity = () => {
-    if (!this.source) {
-      console.log('Tab has become active. Reconnecting for now.');
-      this.connect();
-    }
+  enableNotifications = () => {
+    Notification.requestPermission().then((permission) => {
+      this.setState({askNotification: false});
 
-    this.setState({afk: false});
-    window.clearTimeout(this.inactivityTimeout);
-    window.setTimeout(this.onInactivity, 300000);
+      if (permission === 'granted') {
+        navigator.serviceWorker.getRegistration().then((registration) => {
+          if (registration && 'pushManager' in registration) {
+            registration.pushManager.subscribe({
+              userVisibleOnly: true,
+              applicationServerKey: urlBase64ToUint8Array(process.env.REACT_APP_VAPID)
+            })
+            .then((subscription) => {
+              console.log('Retrieved push endpoint: ' + subscription.endpoint);
+              this.api.post('/push', {
+                endpoint: subscription.endpoint,
+                p256dh: subscription.toJSON().keys.p256dh,
+                auth: subscription.toJSON().keys.auth
+              })
+              .catch(error => {
+                this.setState({error: 'Failed to subscribe to push notifications.'});
+              })
+            });
+          }
+        });
+
+        localStorage.setItem('notificationPreference', 'enabled');
+      } else if (permission === 'denied') {
+        this.setState({error: 'Notification permissions have been denied by the browser.'})
+        localStorage.setItem('notificationPreference', 'disabled');
+      }
+    });
   }
 
-  onInactivity = () => {
-    if (this.source) {
-      console.log('Tab has become inactive. Disconnecting for now.');
+  disableNotifications() {
+    navigator.serviceWorker.getRegistration().then((registration) => {
+      if (registration && 'pushManager' in registration) {
+        registration.pushManager.unsubscribe()
+        .then((subscription) => {
+        })
+        .catch(error => {
+          this.setState({error: 'Failed to ubsubscribe from push notifications.'});
+        })
+      }
+    });
 
-      this.source.close();
-      this.source = null;
-    }
-
-    this.setState({afk: true});
+    localStorage.setItem('notificationPreference', 'disabled');
   }
+
 
   connect() {
     console.log('Subscribing to server-sent events.');
@@ -166,7 +171,7 @@ class Home extends React.Component {
           this.setState({messages: messages});
         }
 
-        if ((document.visibilityState !== 'visible' || this.state.currentConversation !== d.conversation_id) && d.author_id !== this.state.me.id) {
+        if (localStorage.get('notificationPreference') === true && (document.visibilityState !== 'visible' || this.state.currentConversation !== d.conversation_id) && d.author_id !== this.state.me.id) {
           try {
             new Notification(this.state.me.users[d.author_id].username, {body: d.content}).onclick = () => {
               window.focus();
@@ -279,6 +284,15 @@ class Home extends React.Component {
         me={this.state.me}
         api={this.api}
         logout={this.logout}
+        enableNotifications={this.enableNotifications}
+        disableNotifications={this.disableNotifications}
+        />
+
+        <NotificationRequest
+        open={this.state.askNotification}
+        close={() => this.setState({askNotification: false})}
+        yes={this.enableNotifications}
+        no={this.disableNotifications}
         />
 
         <NewConversation
@@ -291,12 +305,6 @@ class Home extends React.Component {
         <Snackbar open={this.state.disconnected}>
           <Alert variant='filled' severity='warning'>
             Trying to reconnect...
-          </Alert>
-        </Snackbar>
-
-        <Snackbar open={this.state.afk}>
-          <Alert variant='filled' severity='info'>
-            This window will be frozen to save resources until you become active.
           </Alert>
         </Snackbar>
 
