@@ -76,7 +76,7 @@ export default function Login(props) {
             <Button type='submit' variant='contained'>Log In</Button>
           </Grid>
           <Grid item>
-            <footer>Don't have an account? <A style={{color: 'blue'}} href='/signup'>Sign up</A></footer>
+            <footer>Don't have an account? <A style={{color: '#90caf9'}} href='/signup'>Sign up</A></footer>
           </Grid>
         </Grid>
       </form>

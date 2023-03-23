@@ -88,7 +88,7 @@ export default function Signup(props) {
             <Button type='submit' variant='contained'>Sign Up</Button>
           </Grid>
           <Grid item>
-            <footer>Already have an account? <A style={{color: 'blue'}} href='/login'>Log in</A></footer>
+            <footer>Already have an account? <A style={{color: '#90caf9'}} href='/login'>Log in</A></footer>
           </Grid>
         </Grid>
       </form>
