@@ -9,7 +9,7 @@ A fast and simple messaging app.
 | Codebase             | Description
 |----------------------|----------------------------------------|
 | [`server`](server)   | Backend written in Python with aiohttp |
-| [`web`](web)         | Web frontend written with React        |
+| [`web`](web)         | Web frontend written with SolidJS      |
 | [`desktop`](desktop) | Electron wrapper for the web app       |
 
 ## About

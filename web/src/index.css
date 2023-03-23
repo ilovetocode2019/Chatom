@@ -1,6 +1,17 @@
 body {
-  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
 
 .form-background {
   position: fixed;
@@ -8,11 +19,13 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: linear-gradient(to bottom right, darkgreen 0%, darkblue 100%);
+  overflow-y: scroll;
+  overflow-x: scroll;
+  background-image: url(assets/splash.avif);
 }
 
 .form-modal {
-  position: fixed;
+  position: relative;
   top: 50%;
   left: 50%;
   -webkit-transform: translate(-50%, -50%);
@@ -20,64 +33,16 @@ body {
   height: fit-content;
   min-width: 300px;
   width: 35%;
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: rgba(0, 0, 0, 0.8);
   color: white;
   padding: 32px;
   border-radius: 4px;
 }
 
-.form-input {
-  min-width: 150px;
-  width: 75%;
-  padding: 12px 20px;
-  margin: 8px 0;
-  display: inline-block;
-  border: 1px solid #ccc;
-  box-sizing: border-box;
-  border-radius: 2px;
-}
-
-.form-submit {
-  background-color: #008CBA;
-  color: white;
-  padding: 14px 20px;
-  margin: 8px 0;
-  border: none;
-  cursor: pointer;
-  width: 100%;
-  border-radius: 2px;
-}
-
-.form-submit:hover {
-  background: #008CBA;
-  outline: none;
-  -webkit-box-shadow: inset 0px 0px 5px #c1c1c1;
-     -moz-box-shadow: inset 0px 0px 5px #c1c1c1;
-          box-shadow: inset 0px 0px 5px #c1c1c1;
-}
-
-.form-submit:disabled {
-  opacity: 0.2;
-}
-
-.form-error {
-  color: red;
-}
-
 @media(max-height: 500px), (max-width: 500px) {
   .form-modal {
-    position: fixed;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    -webkit-transform: unset;
-    transform: unset;
     height: auto;
-    width: auto;
-    background-color: rgba(0, 0, 0, 0.6);
-    border-radius: 0px;
-    overflow: scroll;
+    width: 90%;
   }
 }
 
@@ -95,46 +60,10 @@ body {
   overflow: auto;
 }
 
-@media(max-width: 500px) {
-  .sidebar {
-    width: 100%;
-    height: 100vh;
-    border: none;
-    overflow: auto;
-  }
-}
-
 .conversation {
   flex-grow: 2;
   display: flex;
   flex-direction: column;
   width: 100%;
   height: 100vh;
-}
-
-.messages {
-  overflow-y: auto;
-  word-break: break-word;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.8);
-}
-
-.message {
-  margin-left: 10px;
-  margin-right: 10px;
-}
-
-.message-input {
-  justify-content: center;
-  max-height: 50vh;
-  width: 100%;
-  padding: 12px 20px;
-  border: none;
-  background-color: rgba(255, 255, 255, 0.09);
-  color: white;
-}
-
-.message-input:focus {
-  display: block;
-  outline: none;
 }

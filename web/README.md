@@ -1,3 +1,3 @@
 # web
 
-Web frontend written with React
+Web frontend written with SolidJS
