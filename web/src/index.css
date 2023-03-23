@@ -33,10 +33,12 @@ code {
   height: fit-content;
   min-width: 300px;
   width: 35%;
-  background-color: rgba(0, 0, 0, 0.8);
+  background-color: rgba(0, 0, 0, 0.5);
   color: white;
   padding: 32px;
   border-radius: 4px;
+  -webkit-backdrop-filter:blur(20px);
+  backdrop-filter:blur(20px);
 }
 
 @media(max-height: 500px), (max-width: 500px) {
