@@ -1,7 +1,10 @@
 import { createSignal } from 'solid-js';
 import { A, useNavigate } from '@solidjs/router';
 
-import { Button, Grid, TextField, Typography, FormHelperText } from '@suid/material';
+import Button from '@suid/material/Button';;
+import Grid from '@suid/material/Grid';
+import TextField from '@suid/material/TextField';
+import Typography from '@suid/material/Typography';
 
 import api from '../lib/api';
 
@@ -9,6 +12,7 @@ export default function Signup(props) {
   const [email, setEmail] = createSignal('');
   const [username, setUsername] = createSignal('');
   const [password, setPassword] = createSignal('');
+
   const [error, setError] = createSignal('');
 
   const navigate = useNavigate();
