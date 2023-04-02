@@ -148,6 +148,7 @@ function Home() {
         setConversation={setConversation}
         newConversation={() => setNewConversation(true)}
         showSettings={() => setShowSettings(true)}
+        currentConversation={!(isMobile()) && currentConversation()}
         />
 
         <Show when={currentConversation()}>

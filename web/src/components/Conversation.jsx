@@ -17,7 +17,7 @@ export default function Conversation(props) {
         <Typography align='center' variant='h6'>
           <Show when={props.exit}>
             <IconButton sx={{float: 'left', verticalAlign: 'center', padding: '5px'}}>
-              <ArrowBackIcon onClick={props.exit} sx={{width: 28, height: 28}} />
+              <ArrowBackIcon sx={{width: 28, height: 28}} onClick={props.exit} />
             </IconButton>
           </Show>
 

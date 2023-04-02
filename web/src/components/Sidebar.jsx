@@ -45,7 +45,11 @@ export default function Sidebar(props) {
         </ListSubheader>
       }>
           <For each={Object.values(state.conversations)}>{(conversation, i) =>
-            <SidebarItem conversation={conversation} select={() => props.setConversation(conversation.id)}/>
+            <SidebarItem
+            conversation={conversation}
+            selected={conversation.id == props.currentConversation}
+            select={() => props.setConversation(conversation.id)}
+            />
           }</For>
       </List>
 
@@ -72,7 +76,7 @@ function SidebarItem(props) {
     const avatar = () => user().username.split(/\s/).reduce((response, word) => response += word.slice(0, 1), '').slice(0, 2);
 
     return (
-        <ListItemButton onClick={props.select} sx={{padding: '15px'}} selected={props.conversation == 'Example User'}>
+        <ListItemButton sx={{padding: '15px'}} onClick={props.select} selected={props.selected}>
             <ListItemAvatar>
                 <Avatar>{avatar().toUpperCase()}</Avatar>
             </ListItemAvatar>
