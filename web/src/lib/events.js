@@ -1,6 +1,6 @@
 import { EventSourcePolyfill } from 'event-source-polyfill';
 
-function connect(token) {
+export default function connect(token) {
   console.log('Subscribing to server-sent events...');
   const url = import.meta.env.VITE_API_BASE_URL + '/events';
 

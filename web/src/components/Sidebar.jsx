@@ -31,14 +31,14 @@ export default function Sidebar(props) {
   }
 
   return (
-    <div class='sidebar'>
+    <div ref={props.ref} class='sidebar'>
       <List disablePadding subheader={
         <ListSubheader sx={{margin: '10px'}}>
           <Typography variant='h5' align='center'>
             Chatom
 
-            <IconButton onClick={() => setShowMenu(true)} sx={{float: 'right', verticalAlign: 'top', padding: 0}}>
-                <MoreVertIcon ref={menuAnchor} sx={{ width: 24, height: 24 }} />
+            <IconButton onClick={() => setShowMenu(true)} sx={{float: 'right', verticalAlign: 'center', padding: 0}}>
+                <MoreVertIcon ref={menuAnchor} />
             </IconButton>
           </Typography>
 

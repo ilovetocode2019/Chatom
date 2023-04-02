@@ -1,6 +1,6 @@
-import { createEffect } from 'solid-js';
-
 import AppBar from '@suid/material/AppBar';
+import ArrowBackIcon from '@suid/icons-material/ArrowBack';
+import IconButton from '@suid/material/IconButton';
 import Typography from '@suid/material/Typography';
 
 import { useState } from './Home';
@@ -13,8 +13,16 @@ export default function Conversation(props) {
 
   return (
     <div ref={props.ref} class='conversation'>
-      <AppBar sx={{ boxShadow: 'none' }} position='sticky'>
-          <Typography align='center' variant='h6'>{user().username}</Typography>
+      <AppBar sx={{boxShadow: 'none'}} position='sticky'>
+        <Typography align='center' variant='h6'>
+          <Show when={props.exit}>
+            <IconButton sx={{float: 'left', verticalAlign: 'center', padding: '5px'}}>
+              <ArrowBackIcon onClick={props.exit} sx={{width: 28, height: 28}} />
+            </IconButton>
+          </Show>
+
+          {user().username}
+        </Typography>
       </AppBar>
 
       <div class='messages'>

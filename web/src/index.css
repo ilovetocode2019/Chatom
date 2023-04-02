@@ -52,8 +52,13 @@ code {
   display: flex;
   height: 100vh;
   width: 100vw;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
+home::-webkit-scrollbar{
+  display: none;
+}
 
 .sidebar {
   position: relative;
@@ -106,6 +111,7 @@ code {
   flex-direction: column;
   padding: 30px;
   background-color: rgba(0, 0, 0, 0.8);
+  word-break: break-word;
 }
 
 .message-container {

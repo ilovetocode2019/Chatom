@@ -4,6 +4,8 @@ import { createMediaQuery } from "@solid-primitives/media";
 
 import Box from '@suid/material/Box';
 
+import connect from '../lib/events';
+
 import Conversation from './Conversation';
 import NewConveration from './NewConversation';
 import NotificationRequest from './NotificationRequest';
@@ -64,11 +66,16 @@ function Home() {
 
   const isMobile = createMediaQuery("(max-width: 700px)");
 
+  let sidebarRef;
   let conversationRef;
 
   const setConversation = (conversation) => {
     setCurrentConversation(conversation);
     conversationRef?.scrollIntoView({behavior: 'smooth'});
+  }
+
+  const closeConversation = () => {
+    sidebarRef.scrollIntoView({behavior: 'smooth'});
   }
 
   const enableNotifications = () => {
@@ -119,6 +126,8 @@ function Home() {
     setNotificationPreference('disabled');
   }
 
+  const source = connect(localStorage.getItem('token'));
+
   return (
     <div class='home'>
       <StateContext.Provider value={[state, setState]}>
@@ -135,13 +144,18 @@ function Home() {
         </Show>
 
         <Sidebar
+        ref={sidebarRef}
         setConversation={setConversation}
         newConversation={() => setNewConversation(true)}
         showSettings={() => setShowSettings(true)}
         />
 
         <Show when={currentConversation()}>
-          <Conversation ref={conversationRef} conversation={currentConversation()} />
+          <Conversation
+          ref={conversationRef}
+          conversation={currentConversation()}
+          exit={isMobile() && closeConversation}
+          />
         </Show>
 
         <Show when={!(isMobile()) && !(currentConversation())}>
