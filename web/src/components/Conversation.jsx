@@ -1,6 +1,7 @@
 import AppBar from '@suid/material/AppBar';
 import ArrowBackIcon from '@suid/icons-material/ArrowBack';
 import IconButton from '@suid/material/IconButton';
+import Toolbar from '@suid/material/Toolbar';
 import Typography from '@suid/material/Typography';
 
 import { useState } from './Home';
@@ -13,16 +14,25 @@ export default function Conversation(props) {
 
   return (
     <div ref={props.ref} class='conversation'>
-      <AppBar sx={{boxShadow: 'none'}} position='sticky'>
-        <Typography align='center' variant='h6'>
+      <AppBar position='sticky'>
+        <Toolbar>
           <Show when={props.exit}>
-            <IconButton sx={{float: 'left', verticalAlign: 'center', padding: '5px'}}>
-              <ArrowBackIcon sx={{width: 28, height: 28}} onClick={props.exit} />
+            <IconButton
+            onClick={props.exit}
+            size="large"
+            edge="start"
+            color="inherit"
+            aria-label="menu"
+            sx={{mr: 2, position: 'absolute'}}
+            >
+              <ArrowBackIcon />
             </IconButton>
           </Show>
 
-          {user().username}
-        </Typography>
+          <Typography variant="h6" component="div" sx={{flexGrow: 1, textAlign: 'center'}}>
+            {user().username}
+          </Typography>
+        </Toolbar>
       </AppBar>
 
       <div class='messages'>
