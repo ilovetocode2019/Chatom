@@ -17,7 +17,7 @@ import { useState } from './Home';
 export default function Sidebar(props) {
   let menuAnchor;
 
-  const [state, setState] = useState();
+  const [state, api] = useState();
   const [showMenu, setShowMenu] = createSignal(false);
 
   const newConversation = () => {
@@ -44,11 +44,11 @@ export default function Sidebar(props) {
 
         </ListSubheader>
       }>
-          <For each={Object.values(state.conversations)}>{(conversation, i) =>
+          <For each={Object.keys(state.conversations)}>{(conversation, i) =>
             <SidebarItem
-            conversation={conversation}
-            selected={conversation.id == props.currentConversation}
-            select={() => props.setConversation(conversation.id)}
+            conversation={state.conversations[conversation]}
+            selected={conversation == props.currentConversation}
+            select={() => props.setConversation(conversation)}
             />
           }</For>
       </List>
@@ -71,18 +71,20 @@ export default function Sidebar(props) {
 }
 
 function SidebarItem(props) {
-    const [state, setState] = useState();
-    const user = () => state.users[Object.values(props.conversation.members)[0].user_id];
-    const avatar = () => user().username.split(/\s/).reduce((response, word) => response += word.slice(0, 1), '').slice(0, 2);
+    const [state, api] = useState();
+
+    const members = Object.keys(props.conversation.members);
+    const user = state.users[members[0] !== state.id || members.length == 1 ? members[0] : members[1]];
+    const avatar = user.username.split(/\s/).reduce((response, word) => response += word.slice(0, 1), '').slice(0, 2);
 
     return (
         <ListItemButton sx={{padding: '15px'}} onClick={props.select} selected={props.selected}>
             <ListItemAvatar>
-                <Avatar>{avatar().toUpperCase()}</Avatar>
+                <Avatar>{avatar.toUpperCase()}</Avatar>
             </ListItemAvatar>
 
             <ListItemText>
-              <Typography noWrap>{user().username}</Typography>
+              <Typography noWrap>{user.username}</Typography>
             </ListItemText>
         </ListItemButton>
     );

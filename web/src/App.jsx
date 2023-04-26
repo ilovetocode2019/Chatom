@@ -23,7 +23,7 @@ function App() {
       <CssBaseline />
       <Router>
         <Routes>
-          <Route path='/' element={loggedIn() ? <Home /> : <Navigate href='/login' />} />
+          <Route path='/' element={loggedIn() ? <Home login={setLoggedIn} /> : <Navigate href='/login' />} />
           <Route path='/login' element={loggedIn() ? <Navigate href='/' /> : <Login login={setLoggedIn} />} />
           <Route path='/signup' element={loggedIn() ? <Navigate href='/' /> : <Signup login={setLoggedIn} />} />
           <Route path='*' element={<Navigate href='/' />} />

@@ -1,5 +1,5 @@
 import { createSignal } from 'solid-js';
-import { A, useNavigate } from '@solidjs/router';
+import { A } from '@solidjs/router';
 
 import Button from '@suid/material/Button';;
 import Grid from '@suid/material/Grid';
@@ -11,9 +11,7 @@ import api from '../lib/api';
 export default function Login(props) {
   const [email, setEmail] = createSignal('');
   const [password, setPassword] = createSignal('');
-  const [error, setError] = createSignal('');
-
-  const navigate = useNavigate();
+  const [error, setError] = createSignal();
 
   const onSubmit = (event) => {
     event.preventDefault();
@@ -27,7 +25,6 @@ export default function Login(props) {
     .then(response => {
       localStorage.setItem('token', response.data.token);
       props.login(true);
-      navigate('/');
     })
     .catch(error => {
       if (error.response) {

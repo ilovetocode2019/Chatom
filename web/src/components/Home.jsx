@@ -1,9 +1,9 @@
 import { createSignal, createContext, useContext, Show } from 'solid-js';
-import { createStore } from "solid-js/store";
 import { createMediaQuery } from "@solid-primitives/media";
 
 import Box from '@suid/material/Box';
 
+import api from '../lib/api';
 import connect from '../lib/events';
 
 import Conversation from './Conversation';
@@ -14,54 +14,10 @@ import Sidebar from './Sidebar';
 
 const StateContext = createContext();
 
-function Home() {
-  const [state, setState] = createStore({
-    users: {
-      1: {
-        id: 1,
-        username: 'Example User'
-      },
-      2: {
-        id: 2,
-        username: 'Example User 2'
-      },
-      3: {
-        id: 3,
-        username: 'Example User 3'
-      }
-    },
-    conversations: {
-      1: {
-        id: 1,
-        members: {
-          1: {
-            user_id: 1
-          }
-        }
-      },
-      2: {
-        id: 2,
-        members: {
-          2: {
-            user_id: 2
-          }
-        }
-      },
-      3: {
-        id: 3,
-        members: {
-          3: {
-            user_id: 3
-          }
-        }
-      }
-    }
-  });
-
+function Home(props) {
   const [currentConversation, setCurrentConversation] = createSignal();
-
   const [showSettings, setShowSettings] = createSignal(false);
-  const [newConversation, setNewConversation] = createSignal(false); 
+  const [newConversation, setNewConversation] = createSignal(false);
   const [notificationPreference, setNotificationPreference] = createSignal(localStorage.getItem('notificationPreference'));
 
   const isMobile = createMediaQuery("(max-width: 700px)");
@@ -69,13 +25,32 @@ function Home() {
   let sidebarRef;
   let conversationRef;
 
-  const setConversation = (conversation) => {
-    setCurrentConversation(conversation);
+  const [state, setState] = connect(localStorage.getItem('token'));
+  api.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`
+
+  const openConversation = (conversation) => {
+    api.get(`/conversations/${conversation}/messages`)
+    .then(response => {
+      setState('messages', conversation, response.data);
+      setCurrentConversation(conversation);
+    })
+
     conversationRef?.scrollIntoView({behavior: 'smooth'});
   }
 
   const closeConversation = () => {
     sidebarRef.scrollIntoView({behavior: 'smooth'});
+  }
+
+  const addConversation = (conversation, user) => {
+    setState('users', user.id, user);
+    setState('conversations', conversation.id, conversation);
+    openConversation(conversation.id);
+  }
+
+  const logout = () => {
+    localStorage.removeItem('token');
+    props.login(false);
   }
 
   const enableNotifications = () => {
@@ -126,26 +101,29 @@ function Home() {
     setNotificationPreference('disabled');
   }
 
-  const source = connect(localStorage.getItem('token'));
-
   return (
     <div class='home'>
-      <StateContext.Provider value={[state, setState]}>
+      <StateContext.Provider value={[state, api]}>
         <Show when={notificationPreference() === null}>
           <NotificationRequest yes={enableNotifications} no={disableNotifications}/>
         </Show>
 
         <Show when={newConversation()}>
-          <NewConveration close={() => setNewConversation(false)} />
+          <NewConveration
+          submit={addConversation}
+          close={() => setNewConversation(false)} />
         </Show>
 
         <Show when={showSettings()}>
-          <Settings close={() => setShowSettings(false)} />
+          <Settings
+          logout={logout}
+          close={() => setShowSettings(false)}
+          />
         </Show>
 
         <Sidebar
         ref={sidebarRef}
-        setConversation={setConversation}
+        setConversation={openConversation}
         newConversation={() => setNewConversation(true)}
         showSettings={() => setShowSettings(true)}
         currentConversation={!(isMobile()) && currentConversation()}
