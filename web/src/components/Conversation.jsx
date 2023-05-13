@@ -10,8 +10,8 @@ import { useState } from './Home';
 export default function Conversation(props) {
   const [state, api] = useState();
 
-  const members = Object.keys(state.conversations[props.conversation].members);
-  const username = () => state.users[members[0] !== state.id || members.length == 1 ? members[0] : members[1]].username;
+  const members = () => Object.keys(state.conversations[props.conversation].members);
+  const username = () => state.users[members()[0] !== state.id || members().length == 1 ? members()[0] : members()[1]].username;
   const messages = () => Object.values(state.messages[props.conversation]);
 
   const onScroll = (event) => {
