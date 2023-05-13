@@ -10,9 +10,9 @@ import { useState } from './Home';
 export default function Conversation(props) {
   const [state, api] = useState();
 
-  const conversation = state.conversations[props.conversation];
-  const user = state.users[Object.values(conversation.members)[0].user_id];
-  const messages = () => Object.values(state.messages[conversation.id]);
+  const members = Object.keys(state.conversations[props.conversation].members);
+  const username = () => state.users[members[0] !== state.id || members.length == 1 ? members[0] : members[1]].username;
+  const messages = () => Object.values(state.messages[props.conversation]);
 
   const onScroll = (event) => {
     if (event.target.scrollTop < window.innerHeight) {
@@ -39,7 +39,7 @@ export default function Conversation(props) {
           </Show>
 
           <Typography variant="h6" component="div" sx={{flexGrow: 1, textAlign: 'center'}}>
-            {user.username}
+            {username()}
           </Typography>
         </Toolbar>
       </AppBar>
@@ -50,7 +50,7 @@ export default function Conversation(props) {
         }</For>
       </div>
 
-      <ConversationInput conversation={conversation.id} />
+      <ConversationInput conversation={props.conversation} />
     </div>
     );
 }
