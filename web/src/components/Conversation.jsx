@@ -1,4 +1,4 @@
-import { createSignal, onMount } from 'solid-js';
+import { createSignal, createEffect } from 'solid-js';
 import AppBar from '@suid/material/AppBar';
 import ArrowBackIcon from '@suid/icons-material/ArrowBack';
 import IconButton from '@suid/material/IconButton';
@@ -14,12 +14,20 @@ export default function Conversation(props) {
   const username = () => state.users[members()[0] !== state.id || members().length == 1 ? members()[0] : members()[1]].username;
   const messages = () => Object.values(state.messages[props.conversation]);
 
+  let messageEnd;
+
   const onScroll = (event) => {
     if (event.target.scrollTop < window.innerHeight) {
       console.log('Loading more messages...');
       
     }
   }
+
+  createEffect(() => {
+    if (messages()) {
+      messageEnd.scrollIntoView();
+    }
+  });
 
   return (
     <div ref={props.ref} class='conversation'>
@@ -48,6 +56,8 @@ export default function Conversation(props) {
         <For each={messages()}>{(message, i) =>
           <Message message={message} next={messages()[i()+1]} />
         }</For>
+
+        <div ref={messageEnd} />
       </div>
 
       <ConversationInput conversation={props.conversation} />
