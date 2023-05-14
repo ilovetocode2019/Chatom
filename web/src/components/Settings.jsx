@@ -117,112 +117,220 @@ export default function Settings(props) {
 }
 
 function ChangeEmail(props) {
+  const [state, api] = useState();
+
+  const [currentPassword, setCurrentPassword] = createSignal('');
+  const [newEmail, setNewEmail] = createSignal('');
+  const [error, setError] = createSignal();
+
+  const onSubmit = (event) => {
+    event.preventDefault();
+
+    if (!(currentPassword() && newEmail())) {
+      setError('Current password and new email are required to make this change.');
+      return;
+    }
+
+    api.patch('/account', {
+      email: newEmail(),
+      current_password: currentPassword()
+    })
+    .then(response => {
+      props.close();
+    })
+    .catch(error => {
+      if (error.response) {
+        setError(error.response.data || 'Unexpected error.');
+      } else if (!error.response) {
+        setError('Unbale to contact server. Try again later?');
+      }
+    })
+  }
+
   return (
     <Dialog open={true} onClose={props.close}>
-      <DialogTitle variant='h6' textAlign='center'>
-        Change Email
-      </DialogTitle>
+      <form onSubmit={onSubmit}>
+        <DialogTitle variant='h6' textAlign='center'>
+          Change Email
+        </DialogTitle>
 
-      <DialogContent>
-        <TextField
-        fullWidth
-        label='Current Password'
-        margin='dense'
-        name='currentPassword'
-        onChange={this.handleChange}
-        type='password'
-        variant='outlined'
-        />
+        <DialogContent>
+          <Show when={error()}>
+            <Typography color='red'>{error()}</Typography>
+          </Show>
 
-        <TextField
-        fullWidth
-        label='New Email'
-        margin='dense'
-        name='newEmail'
-        onChange={this.handleChange}
-        type='email'
-        variant='outlined'
-        />
-      </DialogContent>
+          <TextField
+          fullWidth
+          label='Current Password'
+          margin='dense'
+          name='currentPassword'
+          onChange={(e) => setCurrentPassword(e.target.value)}
+          type='password'
+          variant='outlined'
+          />
 
-      <DialogActions>
-        <Button onClick={props.close}>Cancel</Button>
-        <Button onClick={props.close}>Change</Button>
-      </DialogActions>
+          <TextField
+          fullWidth
+          label='New Email'
+          margin='dense'
+          name='newEmail'
+          onChange={(e) => setNewEmail(e.target.value)}
+          type='email'
+          variant='outlined'
+          />
+        </DialogContent>
+
+        <DialogActions>
+          <Button onClick={props.close}>Cancel</Button>
+          <Button type='submit' onClick={onSubmit}>Change</Button>
+        </DialogActions>
+      </form>
     </Dialog>
   );
 }
 
 function ChangeUsername(props) {
+  const [state, api] = useState();
+
+  const [currentPassword, setCurrentPassword] = createSignal('');
+  const [newUsername, setNewUsername] = createSignal('');
+  const [error, setError] = createSignal();
+
+  const onSubmit = (event) => {
+    event.preventDefault();
+
+    if (!(currentPassword() && newUsername())) {
+      setError('Current password and new username are required to make this change.');
+      return;
+    }
+
+    api.patch('/account', {
+      username: newUsername(),
+      current_password: currentPassword()
+    })
+    .then(response => {
+      props.close();
+    })
+    .catch(error => {
+      if (error.response) {
+        setError(error.response.data || 'Unexpected error.');
+      } else if (!error.response) {
+        setError('Unbale to contact server. Try again later?');
+      }
+    })
+  }
+
   return (
     <Dialog open={true} onClose={props.close}>
-      <DialogTitle variant='h6' textAlign='center'>
-        Change Username
-      </DialogTitle>
+      <form onSubmit={onSubmit}>
+        <DialogTitle variant='h6' textAlign='center'>
+          Change Username
+        </DialogTitle>
 
-      <DialogContent>
-        <TextField
-        fullWidth
-        label='Current Password'
-        margin='dense'
-        name='currentPassword'
-        onChange={this.handleChange}
-        type='password'
-        variant='outlined'
-        />
+        <DialogContent>
+          <Show when={error()}>
+            <Typography color='red'>{error()}</Typography>
+          </Show>
 
-        <TextField
-        fullWidth
-        label='New Username'
-        margin='dense'
-        name='newUsername'
-        onChange={this.handleChange}
-        type='username'
-        variant='outlined'
-        />
-      </DialogContent>
+          <TextField
+          fullWidth
+          label='Current Password'
+          margin='dense'
+          name='currentPassword'
+          onChange={(e) => setCurrentPassword(e.target.value)}
+          type='password'
+          variant='outlined'
+          />
 
-      <DialogActions>
-        <Button onClick={props.close}>Cancel</Button>
-        <Button onClick={props.close}>Change</Button>
-      </DialogActions>
+          <TextField
+          fullWidth
+          label='New Username'
+          margin='dense'
+          name='newUsername'
+          onChange={(e) => setNewUsername(e.target.value)}
+          type='username'
+          variant='outlined'
+          />
+        </DialogContent>
+
+        <DialogActions>
+          <Button onClick={props.close}>Cancel</Button>
+          <Button type='submit' onClick={onSubmit}>Change</Button>
+        </DialogActions>
+      </form>
     </Dialog>
   );
 }
 
 function ChangePassword(props) {
+  const [state, api] = useState();
+
+  const [currentPassword, setCurrentPassword] = createSignal('');
+  const [newPassword, setNewPassword] = createSignal('');
+  const [error, setError] = createSignal();
+
+  const onSubmit = (event) => {
+    event.preventDefault();
+
+    if (!(currentPassword() && newPassword())) {
+      setError('Current password and new password are required to make this change.');
+      return;
+    }
+
+    api.patch('/account', {
+      password: newPassword(),
+      current_password: currentPassword()
+    })
+    .then(response => {
+      props.close();
+    })
+    .catch(error => {
+      if (error.response) {
+        setError(error.response.data || 'Unexpected error.');
+      } else if (!error.response) {
+        setError('Unbale to contact server. Try again later?');
+      }
+    })
+  }
+
   return (
     <Dialog open={true} onClose={props.close}>
-      <DialogTitle variant='h6' textAlign='center'>
-        Change Password
-      </DialogTitle>
+      <form onSubmit={onSubmit}>
+        <DialogTitle variant='h6' textAlign='center'>
+          Change Password
+        </DialogTitle>
 
-      <DialogContent>
-        <TextField
-        fullWidth
-        label='Current Password'
-        margin='dense'
-        name='currentPassword'
-        onChange={this.handleChange}
-        type='password'
-        variant='outlined'
-        />
+        <DialogContent>
+          <Show when={error()}>
+            <Typography color='red'>{error()}</Typography>
+          </Show>
 
-        <TextField
-        fullWidth
-        label='New Password'
-        margin='dense'
-        name='newPassword'
-        onChange={this.handleChange}
-        type='password'
-        variant='outlined'
-        />
-      </DialogContent>
+          <TextField
+          fullWidth
+          label='Current Password'
+          margin='dense'
+          name='currentPassword'
+          onChange={(e) => setCurrentPassword(e.target.value)}
+          type='password'
+          variant='outlined'
+          />
 
-      <DialogActions>
-        <Button onClick={props.close}>Cancel</Button>
-        <Button onClick={props.close} color='warning'>Change</Button>
-      </DialogActions>
+          <TextField
+          fullWidth
+          label='New Password'
+          margin='dense'
+          name='newPassword'
+          onChange={(e) => setNewPassword(e.target.value)}
+          type='password'
+          variant='outlined'
+          />
+        </DialogContent>
+
+        <DialogActions>
+          <Button onClick={props.close}>Cancel</Button>
+          <Button type='submit' onClick={onSubmit} color='warning'>Change</Button>
+        </DialogActions>
+      </form>
     </Dialog>
   );
 }
