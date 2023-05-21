@@ -2,8 +2,6 @@
 
 A fast and simple messaging app.
 
-**Work in progress**
-
 ## Structure
 
 | Codebase             | Description
@@ -15,3 +13,9 @@ A fast and simple messaging app.
 ## About
 
 Chatom is an open source messaging app, that I made for fun.
+
+## Support
+
+Email: contact@chatom.app
+
+Discord: https://discord.gg/cNktkG6xND
