@@ -6,7 +6,7 @@ Try it out at https://chatom.app!
 
 ## Structure
 
-| Codebase             | Description
+| Codebase             | Description                            |
 |----------------------|----------------------------------------|
 | [`server`](server)   | Backend written in Python with aiohttp |
 | [`web`](web)         | Web frontend written with SolidJS      |
