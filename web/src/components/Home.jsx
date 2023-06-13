@@ -20,7 +20,7 @@ function Home(props) {
   const [newConversation, setNewConversation] = createSignal(false);
   const [notificationPreference, setNotificationPreference] = createSignal(localStorage.getItem('notificationPreference'));
 
-  const isMobile = createMediaQuery("(max-width: 700px)");
+  const isMobile = createMediaQuery("(max-width: 500px)");
 
   let sidebarRef;
   let conversationRef;
