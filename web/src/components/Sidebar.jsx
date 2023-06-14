@@ -1,6 +1,7 @@
 import { For, createSignal } from 'solid-js';
 
 import Avatar from '@suid/material/Avatar';
+import Button from '@suid/material/Button';
 import IconButton from '@suid/material/IconButton';
 import List from '@suid/material/List';
 import ListItemButton from '@suid/material/ListItemButton';
@@ -19,6 +20,8 @@ export default function Sidebar(props) {
 
   const [state, api] = useState();
   const [showMenu, setShowMenu] = createSignal(false);
+
+  const conversations = () => state.conversations ?? {};
 
   const newConversation = () => {
     props.newConversation();
@@ -44,14 +47,26 @@ export default function Sidebar(props) {
 
         </ListSubheader>
       }>
-          <For each={Object.keys(state.conversations)}>{(conversation, i) =>
+          <For each={Object.keys(conversations())}>{(conversation, i) =>
             <SidebarItem
-            conversation={state.conversations[conversation]}
+            conversation={conversations()[conversation]}
             selected={conversation == props.currentConversation}
             select={() => props.setConversation(conversation)}
             />
           }</For>
       </List>
+
+      <Show when={state.conversations && Object.keys(conversations()).length === 0}>
+        <Typography sx={{textAlign: 'center', margin: '15px'}}>
+          <b>You aren't in any conversations yet...</b>
+
+          <br />
+
+          <Button onClick={props.newConversation} variant='contained'>
+            Create Conversation
+          </Button>
+        </Typography>
+      </Show>
 
       <Menu
       anchorEl={menuAnchor}

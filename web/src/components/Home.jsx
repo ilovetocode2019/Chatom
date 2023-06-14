@@ -1,10 +1,10 @@
-import { createSignal, createContext, useContext, Show } from 'solid-js';
+import { createSignal, createContext, useContext, onMount, Show } from 'solid-js';
 import { createMediaQuery } from "@solid-primitives/media";
 
 import Box from '@suid/material/Box';
 
 import api from '../lib/api';
-import connect from '../lib/events';
+import Connection from '../lib/events';
 
 import Conversation from './Conversation';
 import NewConveration from './NewConversation';
@@ -24,14 +24,14 @@ function Home(props) {
 
   let sidebarRef;
   let conversationRef;
+  var connection;
 
-  const [state, setState] = connect(localStorage.getItem('token'));
   api.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`
 
   const openConversation = (conversation) => {
     api.get(`/conversations/${conversation}/messages`)
     .then(response => {
-      setState('messages', conversation, response.data);
+      connection.setState('messages', conversation, response.data);
       setCurrentConversation(conversation);
     })
 
@@ -43,8 +43,8 @@ function Home(props) {
   }
 
   const addConversation = (conversation, user) => {
-    setState('users', user.id, user);
-    setState('conversations', conversation.id, conversation);
+    connection.setState('users', user.id, user);
+    connection.setState('conversations', conversation.id, conversation);
     openConversation(conversation.id);
   }
 
@@ -101,9 +101,20 @@ function Home(props) {
     setNotificationPreference('disabled');
   }
 
+  connection = new Connection();
+  connection.logout = logout;
+
+  onMount(connection.initate);
+
   return (
     <div class='home'>
-      <StateContext.Provider value={[state, api]}>
+      <Show when={!(connection.connected())}>
+        <div class='alert' type='warning'>
+          Trying to connect...
+        </div>
+      </Show>
+
+      <StateContext.Provider value={[connection.state, api]}>
         <Show when={notificationPreference() === null}>
           <NotificationRequest yes={enableNotifications} no={disableNotifications}/>
         </Show>
