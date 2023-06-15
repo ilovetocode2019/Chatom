@@ -8,8 +8,9 @@ export default class Connection {
     [this.state, this.setState] = createStore();
     [this.messages, this.setMessages] = createStore({});
 
-    this.logout = null;
     this.backoff = 0.5;
+    this.logout = null;
+    this.showNotification = null;
   }
 
   initate = () => {
@@ -41,6 +42,8 @@ export default class Connection {
         if (d.conversation_id in this.state.messages) {
           this.setState('messages', d.conversation_id, d.id, d);
         }
+
+        this.showNotification(d);
       } else if (e === 5) {
         this.setState('users', d.id, d);
       }

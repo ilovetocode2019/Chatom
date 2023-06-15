@@ -21,6 +21,14 @@ export default function Settings(props) {
   const [changePassword, setChangePassword] = createSignal(false);
   const [confirmLogout, setConfirmLogout] = createSignal(false);
 
+  const notificationChange = (event) => {
+    if (event.target.checked) {
+      props.disableNotifications();
+    } else {
+      props.enableNotifications();
+    }
+  }
+
   return (
     <>
       <Dialog open={true} onClose={props.close}>
@@ -67,7 +75,10 @@ export default function Settings(props) {
               <Grid container spacing={1}>
                 <Grid item>
                   <Typography sx={{display: 'inline'}} display='inline'>Notifications</Typography>
-                  <Switch checked={true} />
+                  <Switch
+                  checked={props.notificationPreference() === 'enabled'}
+                  onChange={notificationChange}
+                  />
                 </Grid>
               </Grid>
             </Grid>

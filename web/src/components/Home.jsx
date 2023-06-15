@@ -24,7 +24,6 @@ function Home(props) {
 
   let sidebarRef;
   let conversationRef;
-  var connection;
 
   api.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`
 
@@ -54,28 +53,8 @@ function Home(props) {
   }
 
   const enableNotifications = () => {
-    Notification.requestPermission().then(permission => {
+    Notification.requestPermission().then((permission) => {
       if (permission == 'granted') {
-        navigator.serviceWorker?.getRegistration().then((registration) => {
-          if (registration && 'pushManager' in registration) {
-            registration.pushManager.subscribe({
-              userVisibleOnly: true,
-              applicationServerKey: urlBase64ToUint8Array(import.meta.env.VITE_VAPID)
-            })
-            .then((subscription) => {
-              console.log('Retrieved push endpoint: ' + subscription.endpoint);
-              this.api.post('/push', {
-                endpoint: subscription.endpoint,
-                p256dh: subscription.toJSON().keys.p256dh,
-                auth: subscription.toJSON().keys.auth
-              })
-              .catch(error => {
-                this.setState({error: 'Failed to subscribe to push notifications.'});
-              })
-            });
-          }
-        });
-
         localStorage.setItem('notificationPreference', 'enabled');
         setNotificationPreference('enabled');
       } else {
@@ -86,23 +65,22 @@ function Home(props) {
   }
 
   const disableNotifications = () => {
-    navigator.serviceWorker?.getRegistration().then((registration) => {
-      if (registration && 'pushManager' in registration) {
-        registration.pushManager.unsubscribe()
-        .then((subscription) => {
-        })
-        .catch(error => {
-          this.setState({error: 'Failed to ubsubscribe from push notifications.'});
-        })
-      }
-    });
-
     localStorage.setItem('notificationPreference', 'disabled');
     setNotificationPreference('disabled');
   }
 
-  connection = new Connection();
+  const showNotification = (message) => {
+    if (notificationPreference() === 'enabled' && (document.visibilityState === 'hidden' || message.conversation_id != currentConversation) && message.author_id !== connection.state.id) {
+      new Notification(connection.state.users[message.author_id].username, {body: message.content}).onclick = () => {
+        window.focus();
+        openConversation(message.conversation_id);
+      };
+    }
+  }
+
+  const connection = new Connection();
   connection.logout = logout;
+  connection.showNotification = showNotification;
 
   onMount(connection.initate);
 
@@ -129,6 +107,9 @@ function Home(props) {
           <Settings
           logout={logout}
           close={() => setShowSettings(false)}
+          notificationPreference={notificationPreference}
+          enableNotifications={enableNotifications}
+          disableNotifications={disableNotifications}
           />
         </Show>
 

@@ -65,7 +65,7 @@ class Application(web.Application):
                         "conversation_id": d["conversation_id"]
                     }
 
-                    pywebpush.webpush(subscription_info, data=json.dumps(data), vapid_private_key=self["config"].vapid, vapid_claims={"sub": "mailto:chatomchat@outlook.com"})
+                    pywebpush.webpush(subscription_info, data=json.dumps(data), vapid_private_key=self["config"].vapid, vapid_claims={"sub": "mailto:contact@chatom.app"})
                 except pywebpush.WebPushException as exc:
                     log.error("Failed to send push notification to user ID %s", user_id, exc_info=exc)
 
